@@ -1,0 +1,13 @@
+(executable
+ (name parser)
+ (libraries lambdasoup biniou yojson atdgen))
+
+(rule
+ (targets parser_j.ml parser_j.mli)
+ (deps    parser.atd)
+ (action  (run atdgen -j -j-std %{deps})))
+
+(rule
+ (targets parser_t.ml parser_t.mli)
+ (deps    parser.atd)
+ (action  (run atdgen -t %{deps})))

@@ -1,0 +1,23 @@
+B /home/jkwan/.opam/4.07.0/lib/atdgen
+B /home/jkwan/.opam/4.07.0/lib/atdgen-runtime
+B /home/jkwan/.opam/4.07.0/lib/biniou
+B /home/jkwan/.opam/4.07.0/lib/bytes
+B /home/jkwan/.opam/4.07.0/lib/easy-format
+B /home/jkwan/.opam/4.07.0/lib/lambdasoup
+B /home/jkwan/.opam/4.07.0/lib/markup
+B /home/jkwan/.opam/4.07.0/lib/uchar
+B /home/jkwan/.opam/4.07.0/lib/uutf
+B /home/jkwan/.opam/4.07.0/lib/yojson
+B _build/default/.parser.eobjs
+S /home/jkwan/.opam/4.07.0/lib/atdgen
+S /home/jkwan/.opam/4.07.0/lib/atdgen-runtime
+S /home/jkwan/.opam/4.07.0/lib/biniou
+S /home/jkwan/.opam/4.07.0/lib/bytes
+S /home/jkwan/.opam/4.07.0/lib/easy-format
+S /home/jkwan/.opam/4.07.0/lib/lambdasoup
+S /home/jkwan/.opam/4.07.0/lib/markup
+S /home/jkwan/.opam/4.07.0/lib/uchar
+S /home/jkwan/.opam/4.07.0/lib/uutf
+S /home/jkwan/.opam/4.07.0/lib/yojson
+S .
+FLG -w @a-4-29-40-41-42-44-45-48-58-59-60-40 -strict-sequence -strict-formats -short-paths -keep-locs
