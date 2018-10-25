@@ -1,2 +1,9 @@
-parser/_build
-parser/htmlman
+/parser/_build
+/parser/htmlman
+/node_modules
+/dist
+/lib
+/.vscode
+/.cache
+.merlin
+.bsb.lock
