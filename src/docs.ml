@@ -4,6 +4,8 @@ open Decoder
 open Home_page
 open License
 
+module Task = Tea_task
+
 type doc
 type dom_element = Dom.element Js.Nullable.t
 external document : doc = "" [@@bs.val]
@@ -18,6 +20,7 @@ type function_name = string
 type msg 
   = UrlChange of Web.Location.location
   | ClickedSidebarLink of module_name * bool
+  | Scroll
   [@@bs.deriving accessors]
 
 type page =
@@ -123,16 +126,11 @@ let setScrollPosition position =
 let update model msg =
   match msg with
   | UrlChange location ->
-    let page =
-      match location.Web.Location.hash with
-      | "home" -> { name = "home"; position = "" }
-      | hash -> parse_hash_value hash
-    in
-    let _ = setScrollPosition page.position in
     { model with 
       history = location :: model.history 
-    ; page
-    }, Cmd.none
+    ; page = parse_hash_value location.Web.Location.hash
+    }, 
+    Task.perform (fun _ -> Scroll) (Task.succeed ())
 
   | ClickedSidebarLink (sidebar_link_name, is_functions) ->
     let 
@@ -150,6 +148,10 @@ let update model msg =
     { model with 
       sidebar_links = List.map flipSelected model.sidebar_links
     }, Cmd.none
+
+  | Scroll ->
+    let _ = setScrollPosition model.page.position in
+      model, Cmd.none
 
 
 (* ------------ ViEW -------------- *)
@@ -214,7 +216,7 @@ let module_sidebar_links sidebar_links =
 let view_sidebar sidebar_links =
   aside [ class' "sidebar" ]
     [ a
-      [ href "/" ]
+      [ href "#docs_home" ]
       [ img [ src "http://ocaml.org/img/colour-logo-white.svg"; id "logo" ] []
       ]
     ; h5 [ id "version" ] [ text "v4.07 (Unofficial)" ]
@@ -225,6 +227,7 @@ let view_sidebar sidebar_links =
             [ text "Official Docs" ]
         ]
     ; h6 [] [ a [ href "https://ocaml.org/" ] [ text "Official Website" ] ]
+    ; h6 [] [ a [ href "https://www.streamingspring.com" ] [ text "Back to Blog" ] ]
     ; h3 [ id "modules-title" ] [ text "Modules" ]
     ; ul 
         [ class' "module-links" ] 
@@ -317,7 +320,7 @@ let view_sections module_item =
 
 let view_main model =
   match model.page with
-  | { name = "home" } ->
+  | { name = "docs_home" } ->
     main [ id "home"; class' "content" ] (home_page ())
   | { name = "license" } ->
     main [ id "license"; class' "content" ] (license ())

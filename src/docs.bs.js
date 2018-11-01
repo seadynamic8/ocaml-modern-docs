@@ -10,6 +10,7 @@ var License = require("./license.bs.js");
 var Tea_cmd = require("bucklescript-tea/src-ocaml/tea_cmd.js");
 var Tea_sub = require("bucklescript-tea/src-ocaml/tea_sub.js");
 var Tea_html = require("bucklescript-tea/src-ocaml/tea_html.js");
+var Tea_task = require("bucklescript-tea/src-ocaml/tea_task.js");
 var Home_page = require("./home_page.bs.js");
 var Tea_navigation = require("bucklescript-tea/src-ocaml/tea_navigation.js");
 var Caml_builtin_exceptions = require("bs-platform/lib/js/caml_builtin_exceptions.js");
@@ -143,7 +144,13 @@ function setScrollPosition(position) {
 }
 
 function update(model, msg) {
-  if (msg.tag) {
+  if (typeof msg === "number") {
+    setScrollPosition(model[/* page */3][/* position */1]);
+    return /* tuple */[
+            model,
+            Tea_cmd.none
+          ];
+  } else if (msg.tag) {
     var is_functions = msg[1];
     var sidebar_link_name = msg[0];
     var flipSelected = function (s) {
@@ -178,12 +185,6 @@ function update(model, msg) {
           ];
   } else {
     var $$location = msg[0];
-    var hash = $$location[/* hash */7];
-    var page = hash === "home" ? /* record */[
-        /* name */"home",
-        /* position */""
-      ] : parse_hash_value(hash);
-    setScrollPosition(page[/* position */1]);
     return /* tuple */[
             /* record */[
               /* history : :: */[
@@ -192,9 +193,11 @@ function update(model, msg) {
               ],
               /* module_list */model[/* module_list */1],
               /* sidebar_links */model[/* sidebar_links */2],
-              /* page */page
+              /* page */parse_hash_value($$location[/* hash */7])
             ],
-            Tea_cmd.none
+            Tea_task.perform((function () {
+                    return /* Scroll */0;
+                  }), Tea_task.succeed(/* () */0))
           ];
   }
 }
@@ -322,7 +325,7 @@ function view_sidebar(sidebar_links) {
               /* [] */0
             ], /* :: */[
               Tea_html.a(undefined, undefined, /* :: */[
-                    Tea_html.href("/"),
+                    Tea_html.href("#docs_home"),
                     /* [] */0
                   ], /* :: */[
                     Tea_html.img(undefined, undefined, /* :: */[
@@ -365,19 +368,31 @@ function view_sidebar(sidebar_links) {
                           /* [] */0
                         ]),
                     /* :: */[
-                      Tea_html.h3(undefined, undefined, /* :: */[
-                            Tea_html.id("modules-title"),
-                            /* [] */0
-                          ], /* :: */[
-                            Tea_html.text("Modules"),
+                      Tea_html.h6(undefined, undefined, /* [] */0, /* :: */[
+                            Tea_html.a(undefined, undefined, /* :: */[
+                                  Tea_html.href("https://www.streamingspring.com"),
+                                  /* [] */0
+                                ], /* :: */[
+                                  Tea_html.text("Back to Blog"),
+                                  /* [] */0
+                                ]),
                             /* [] */0
                           ]),
                       /* :: */[
-                        Tea_html.ul(undefined, undefined, /* :: */[
-                              Tea_html.class$prime("module-links"),
+                        Tea_html.h3(undefined, undefined, /* :: */[
+                              Tea_html.id("modules-title"),
                               /* [] */0
-                            ], List.map(sidebar_link, sidebar_links)),
-                        /* [] */0
+                            ], /* :: */[
+                              Tea_html.text("Modules"),
+                              /* [] */0
+                            ]),
+                        /* :: */[
+                          Tea_html.ul(undefined, undefined, /* :: */[
+                                Tea_html.class$prime("module-links"),
+                                /* [] */0
+                              ], List.map(sidebar_link, sidebar_links)),
+                          /* [] */0
+                        ]
                       ]
                     ]
                   ]
@@ -532,7 +547,7 @@ function view_main(model) {
   var match = model[/* page */3];
   var name = match[/* name */0];
   switch (name) {
-    case "home" : 
+    case "docs_home" : 
         return Tea_html.main(undefined, undefined, /* :: */[
                     Tea_html.id("home"),
                     /* :: */[
@@ -638,8 +653,14 @@ var main = Tea_navigation.navigationProgram(urlChange, /* record */[
         })
     ]);
 
+var Task = 0;
+
+var scroll = /* Scroll */0;
+
+exports.Task = Task;
 exports.urlChange = urlChange;
 exports.clickedSidebarLink = clickedSidebarLink;
+exports.scroll = scroll;
 exports.get_module_list = get_module_list;
 exports.get_function_names = get_function_names;
 exports.functions_in_sub_sections = functions_in_sub_sections;
