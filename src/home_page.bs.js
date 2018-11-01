@@ -24,8 +24,17 @@ function home_page() {
                   ]),
               /* :: */[
                 Tea_html.p(undefined, undefined, /* [] */0, /* :: */[
-                      Tea_html.text("It is open source.  The code I used to create this was put here at\r\n        Github: [my github repo]"),
-                      /* [] */0
+                      Tea_html.text("It is open source.  The code I used to create this was put here at\r\n        Github: "),
+                      /* :: */[
+                        Tea_html.a(undefined, undefined, /* :: */[
+                              Tea_html.href("https://github.com/seadynamic8/ocaml-modern-docs"),
+                              /* [] */0
+                            ], /* :: */[
+                              Tea_html.text("https://github.com/seadynamic8/ocaml-modern-docs"),
+                              /* [] */0
+                            ]),
+                        /* [] */0
+                      ]
                     ]),
                 /* :: */[
                   Tea_html.ul(undefined, undefined, /* [] */0, /* :: */[

@@ -16,7 +16,10 @@ let home_page _model =
   ; p
       []
       [ text "It is open source.  The code I used to create this was put here at
-        Github: [my github repo]" ]
+        Github: "
+      ; a [ href "https://github.com/seadynamic8/ocaml-modern-docs" ]
+          [ text "https://github.com/seadynamic8/ocaml-modern-docs" ] 
+      ]
   ; ul
       []
       [ li
