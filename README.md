@@ -1,6 +1,6 @@
 
 This is an unofficial version of the OCaml Standard Library docs but with a 
-modernized theme.  [Click here](https://www.streaming-spring.com/ocaml/docs) for where the guide is hosted.
+modernized theme.  [Click here](https://www.streamingspring.com/ocaml/docs/) for where the guide is hosted.
 
 It parses the official html docs, converts it into json to store it.  Then it 
 decodes the json and builds a modern site around it using better structure with a sidebar to quickly move between modules and functions.
