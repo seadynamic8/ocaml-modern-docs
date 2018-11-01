@@ -97,7 +97,7 @@ let init () location =
   ; module_list
   ; sidebar_links = create_sidebar_link_state module_list
   ; page = 
-    { name = "home"
+    { name = "docs_home"
     ; position = ""
     }
   }, Cmd.none

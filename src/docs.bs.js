@@ -83,7 +83,7 @@ function init(_, $$location) {
             /* module_list */get_module_list,
             /* sidebar_links */create_sidebar_link_state(get_module_list),
             /* page : record */[
-              /* name */"home",
+              /* name */"docs_home",
               /* position */""
             ]
           ],
