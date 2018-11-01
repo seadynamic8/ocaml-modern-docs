@@ -1,10 +1,10 @@
 type name = string
-type info = string option
+type info = string nullable
 
 type type_type       = string
-type type_table      = string option
+type type_table      = string nullable
 type func_annotation = string
-type exec_parameter  = string option
+type exec_parameter  = string nullable
 
 type element_type =
   [ Type of        ( name * type_type * info )
@@ -16,14 +16,14 @@ type element_type =
   ] <ocaml repr="classic">
 
 type section =
-  { section_name : string option
-  ; section_info : string option
+  { section_name : string nullable
+  ; section_info : string nullable
   ; elements     : element_type list
   ; sub_sections : section list
   }
 
 type module_parts =
-  { module_name        : string
+  { module_name : string
   ; module_info : string
   ; sections    : section list
   }

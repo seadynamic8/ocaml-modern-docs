@@ -3,7 +3,6 @@
 open Soup
 open Parser_t
 
-
 (* type name = string
 type info = string option
 
@@ -70,7 +69,6 @@ let output_filename = "modules.json"
 let parse_html_info node =
   node 
   |> children
-  |> elements 
   |> to_list 
   |> List.map (fun elem -> to_string elem) 
   |> String.concat ""
@@ -85,6 +83,7 @@ let rec parse_info_exception next_node info =
   match name next_node with
   | "p" | "ul" ->
     let next_next_node = next_node |> next_element in
+
     begin match next_next_node with
     | Some next_next_node ->
       parse_info_exception next_next_node (info ^ (to_string next_node))
@@ -97,16 +96,37 @@ let rec parse_info_exception next_node info =
 let parse_next_nodes node =
   match node |> next_element with
   | Some next_node ->
+
     begin match node_class next_node with
     | "info" ->
+      let next_next_node = next_node |> next_element in
       let div_info = parse_html_info next_node in
-      (Some div_info, None, next_node |> next_element)
+
+      begin match next_next_node with
+      | Some next_next_node ->
+
+        begin match node_class next_next_node with
+        (* Exception for Arg - has a param-info section *)
+        | "param_info" -> 
+          let param_info = next_next_node |> to_string in
+          let div_info = div_info ^ param_info in
+          (Some div_info, None, next_next_node |> next_element)
+
+        | _ ->
+          (Some div_info, None, Some next_next_node)
+        end
+
+      | None ->
+        (Some div_info, None, Some next_node)
+      end
+
     | "typetable" ->
       let next_next_node = next_node |> next_element in
       let type_table = parse_html_info next_node in
 
       begin match next_next_node with
       | Some next_next_node ->
+
         begin match node_class next_next_node with
         | "info" -> 
           let div_info = parse_html_info next_next_node in
@@ -114,6 +134,7 @@ let parse_next_nodes node =
         | _ -> 
           (None, Some type_table, Some next_next_node)
         end
+
       | None ->
         (None, Some type_table, Some next_node)
       end
@@ -121,8 +142,10 @@ let parse_next_nodes node =
     (* Exception for Format -> Formatted pretty-printing (function info not in div) *)
     | _ when (name next_node = "p") || (name next_node = "ul") -> 
       parse_info_exception next_node ""
+
     | _ -> (None, None, Some next_node)
     end
+    
   | None ->
     (None, None, None)
 
@@ -135,7 +158,8 @@ let parse_element node =
       Type (name, type_type, div_info)
     | "type" :: name :: _tl ->
       Typevariant (name, type_table, div_info)
-    | "val" :: name :: _sep :: annotation :: _tl ->
+    | "val" :: name :: _sep :: tl ->
+      let annotation = String.concat " " tl in
       Function (name, annotation, div_info)
     | "exception" :: name :: _sep :: parameter :: _tl ->
       Exception (name, Some parameter, div_info)
@@ -153,7 +177,6 @@ let parse_element node =
     (next_element, parsed_element)
 
 
-
 let is_sect_exception node =
   let prev_node = node |> R.previous_element |> name in
     prev_node = "div"
@@ -161,11 +184,16 @@ let is_sect_exception node =
 let is_section_element node =
   match node with
   | Some node ->
+
     let section = 
       begin match name node with
-      | "h2" | "h7" | "p" when is_sect_exception node -> 
+      | "h2" | "h4" | "h7" ->
           MainSection
-      | "h3" | "div" when node_class node = "h8" -> 
+      | "p" when is_sect_exception node -> 
+          MainSection
+      | "h3" ->
+          SubSection
+      | "div" when node_class node = "h8" -> 
           SubSection
       | "p" | "ul" | "pre" -> 
           Element
@@ -179,7 +207,7 @@ let is_section_element node =
 
 let parse_section_header node section =
   match name node with
-  | "h2" | "h3" | "h7" | "div" ->
+  | "h2" | "h3" | "h4" | "h7" | "div" ->
     (node |> next_element, 
     { section with section_name = Some (node |> R.leaf_text) })
   | _ ->
@@ -188,6 +216,7 @@ let parse_section_header node section =
 let rec parse_section_info node section =
   match node with
   | Some node ->
+
     begin match name node with
     | "p" | "ul" -> 
       parse_section_info 
@@ -205,40 +234,49 @@ let process_section_top node section =
   let (next_node, section) = parse_section_header node section in
   parse_section_info next_node section
 
-let rec process_section_elements node section =
+let rec process_section_elements node section in_sub_section =
   match is_section_element node with
   | End, _ ->
     (None, 
     { section with 
       elements     = List.rev section.elements
     ; sub_sections = List.rev section.sub_sections })
+
   | MainSection, node ->
     (Some node, 
     { section with 
       elements     = List.rev section.elements
     ; sub_sections = List.rev section.sub_sections })
-  | SubSection, node -> 
-    let (next_node, sub_section) = process_section_top node blank_section in
-    let (next_element, sub_section) = process_section_elements next_node sub_section in
 
-    process_section_elements 
-      next_element
-      ({ section with sub_sections = sub_section :: section.sub_sections })
+  | SubSection, node -> 
+    if in_sub_section = true then
+      (Some node, 
+      { section with 
+        elements     = List.rev section.elements
+      ; sub_sections = List.rev section.sub_sections })
+    else
+      let (next_node, sub_section) = process_section_top node blank_section in
+      let (next_element, sub_section) = process_section_elements next_node sub_section true in
+
+      process_section_elements 
+        next_element
+        ({ section with sub_sections = sub_section :: section.sub_sections }) false
+
   | Element, node ->
     let (next_element, element) = parse_element node in
     process_section_elements 
       next_element
-      ({ section with elements = element :: section.elements })
+      ({ section with elements = element :: section.elements }) in_sub_section
 
 let process_section node section =
   let (next_node, section) = process_section_top node section in
-  process_section_elements next_node section
+  process_section_elements next_node section false
 
 let is_new_section node =
   match node with
   | Some node ->
     begin match name node with
-    | "h2" | "h3" | "h7" | "p" | "ul" | "pre" -> Some node
+    | "h2" | "h3" | "h4" | "h7" | "p" | "ul" | "pre" -> Some node
     | _ -> None
     end
   | None -> None
@@ -247,6 +285,7 @@ let rec find_next_section node module_elements =
   match is_new_section node with
   | None ->
     { module_elements with sections = List.rev module_elements.sections }
+
   | Some node ->
     let (next_section_node, new_section) = process_section node blank_section in
     find_next_section 

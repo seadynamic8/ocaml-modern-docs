@@ -1,0 +1,229 @@
+@import url('https://fonts.googleapis.com/css?family=Overpass+Mono:400,600');
+
+$dark-grey: #404040;
+$sidebar-link-color: #eed3af;
+$ocaml-orange: #F48A32;
+$general-text: #4a4a4a;
+
+@mixin subtitle-header {
+	padding: 1rem 2rem;
+	margin: 2rem 0 1rem;
+	border: 1px solid #ffe6b9;
+	border-radius: 2px;
+	background-color: orange;
+	color: white;
+	font-weight: 500;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+body {
+	font-family: "Segoe UI", "Roboto", "Ubuntu", sans-serif;
+	margin: 0;
+	color: $general-text;
+	line-height: 1.5;
+}
+
+ul {
+	list-style: none;
+	padding: 0;
+}
+
+a {
+	text-decoration: none;
+}
+
+.content {
+	margin-left: 300px;
+	padding: 2rem 3rem 4rem 3rem;
+	font-size: 1.1rem;
+}
+
+.sidebar {
+	top: 0;
+	position: fixed;
+	overflow: scroll;
+	width:  300px;
+	height: 100%;
+	background-color: $dark-grey;
+	color: white;
+	padding: 1rem 3rem 3rem 3rem;
+	font-size: 1.04rem;
+
+	li {
+		margin-bottom: 0.07rem;
+	}
+
+	a {
+		color: $sidebar-link-color;
+		font-weight: lighter;
+		cursor: pointer;
+	}
+
+	#logo {
+		width: 100%;
+	}
+
+	h5 {
+		font-size: 1.1rem;
+		margin: 0.7rem 0 0.7rem;
+	}
+
+	h6 {
+		font-size: 1rem;
+		margin: 0 0 0;
+	}
+
+	#modules-title {
+		margin-top: 2rem;
+		margin-bottom: 1rem;
+		font-size: 1.2rem;
+	}
+
+	.sublist {
+		display: none;
+		margin-left: 1.5rem;
+
+		.function-links {
+			display: none;
+			margin-left: 1.5rem;
+		}
+
+		.selected {
+			display: block;
+		}
+	}
+
+	.selected {
+		display: block;
+	}
+}
+
+#module-content {
+
+	a {
+		cursor: text;
+		pointer-events: none;
+		color: inherit;
+	}
+
+	.section {
+		.subtitle {
+			@include subtitle-header;
+		}
+	}
+
+	.element {
+		font-family: "Overpass Mono", "Segoe UI", "Roboto", "Ubuntu", sans-serif;
+		font-weight: 600;
+		font-size: 1.03rem;
+		background-color: #f7f7f7;
+		padding: .5rem 1rem;
+		margin: 2rem 0 1rem;
+		border-left : 3px solid $ocaml-orange;
+
+		.category {
+			color: $ocaml-orange;
+		}
+	}
+
+	.sub-section {
+		margin-left: 2rem;
+
+		.subtitle {
+			font-size: 1.5rem;
+			font-weight: 500;
+			background-color: #ffbd42;
+		}
+	}
+
+	p {
+		margin-bottom: 0.7rem;
+	}
+
+	.codepre .code {
+		border: 0;
+		font-size: 0.8rem;
+	}
+
+	.code {
+		border-radius: 2px;
+		color: #465F91;
+		background-color: #f5f5f5;
+		padding: 0.1rem 0.3rem;
+		font-family: "Overpass Mono", "Segoe UI", "Roboto", "Ubuntu", sans-serif;
+		font-weight: 400;
+		font-size: 1rem;
+		
+		.constructor {
+			color: $ocaml-orange;
+		}
+
+		.string {
+			color: #6f6ff5;
+		}
+	}
+
+	table {
+		font-size: 1.27rem;
+		margin-left: 1rem;
+		margin-bottom: 1rem;
+
+		.typefieldcomment code {
+			color: #465F91;
+		}
+
+		code {
+			background-color: inherit;
+			color: #465F91;
+			font-weight: bold;
+
+			.constructor {
+				color: $ocaml-orange;
+			}
+
+			.type {
+				color: #6196ff;
+			}
+		}
+
+		.info {
+			font-size: 1.1rem;
+		}
+	}
+
+	.info {
+		margin: 0 1.5rem;
+
+		// Hack - the h2 was nested inside the info some reason
+		h2 {  
+			@include subtitle-header;
+			margin: 2rem -1.5rem 1rem;
+		}
+
+		ul {
+			margin: 1rem 2rem;
+			list-style: disc outside;
+
+			ul {
+				list-style-type: circle;
+			}
+		}
+
+		.warning {
+			color: red;
+			font-weight: 600;
+			margin-right: 1rem;
+		}
+	}
+}
+
+#home {
+	
+	ul {
+		list-style: disc;
+		margin-left: 2rem;
+	}
+}
