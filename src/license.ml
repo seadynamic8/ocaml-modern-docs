@@ -4,19 +4,22 @@ open Html
 
 let license _model =
 	[ p [] 
-    [ text "The OCaml system is copyright &#XA9; 1996&#X2013;2013
-      Institut National de Recherche en Informatique et en
+    [ text "The OCaml system is copyright "
+  	; span [ Vdom.prop "innerHTML" "&#XA9; 1996&#X2013;" ] []
+    ; text "2013 Institut National de Recherche en Informatique et en
       Automatique (INRIA).
       INRIA holds all ownership rights to the OCaml system." ]
   ; p [] 
     [ text "The OCaml system is open source and can be freely
-      redistributed. See the file <span class=\"c003\">LICENSE</span> in the distribution for
+      redistributed. See the file LICENSE in the distribution for
       licensing information." ]
   ; p [] 
-    [ text "The present documentation is copyright &#XA9; 2013
-      Institut National de Recherche en Informatique et en
-      Automatique (INRIA). The OCaml documentation and user&#X2019;s
-      manual may be reproduced and distributed in whole or
+    [ text "The present documentation is copyright "
+    ; span [ Vdom.prop "innerHTML" "&#XA9;" ] []
+    ; text " 2013 Institut National de Recherche en Informatique et en
+      Automatique (INRIA). The OCaml documentation and user"
+    ; span [ Vdom.prop "innerHTML" "&#X2019;" ] []
+    ; text "s manual may be reproduced and distributed in whole or
       in part, subject to the following conditions:" ]
   ; ul
       []
@@ -27,12 +30,16 @@ let license _model =
       ; li
           []
           [ text "Any translation or derivative work of the OCaml
-            documentation and user&#X2019;s manual must be approved by the authors in
+            documentation and user"
+          ; span [ Vdom.prop "innerHTML" "&#X2019;" ] []
+          ; text "s manual must be approved by the authors in
             writing before distribution." ]
       ; li
           []
           [ text "If you distribute the OCaml
-            documentation and user&#X2019;s manual in part, instructions for obtaining
+            documentation and user"
+          ; span [ Vdom.prop "innerHTML" "&#X2019;" ] []
+          ; text "s manual in part, instructions for obtaining
             the complete version of this manual must be included, and a
             means for obtaining a complete version provided." ]
       ; li
@@ -41,4 +48,5 @@ let license _model =
             quotes in other works without this permission notice if proper
             citation is given." ]
       ]
-    ]
+  ; a [ href "#docs_home" ] [ text "Back to Home" ]
+  ]

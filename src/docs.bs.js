@@ -548,68 +548,26 @@ function view_main(model) {
   var name = match[/* name */0];
   switch (name) {
     case "docs_home" : 
-        return Tea_html.main(undefined, undefined, /* :: */[
-                    Tea_html.id("home"),
-                    /* :: */[
-                      Tea_html.class$prime("content"),
-                      /* [] */0
-                    ]
-                  ], Home_page.home_page(/* () */0));
+        return Home_page.home_page(/* () */0);
     case "license" : 
-        return Tea_html.main(undefined, undefined, /* :: */[
-                    Tea_html.id("license"),
-                    /* :: */[
-                      Tea_html.class$prime("content"),
-                      /* [] */0
-                    ]
-                  ], License.license(/* () */0));
+        return /* :: */[
+                Tea_html.main(undefined, undefined, /* :: */[
+                      Tea_html.id("license"),
+                      /* :: */[
+                        Tea_html.class$prime("content"),
+                        /* [] */0
+                      ]
+                    ], License.license(/* () */0)),
+                /* [] */0
+              ];
     default:
       try {
         var module_item = List.find((function (m) {
                 return m[/* module_name */0] === name;
               }), model[/* module_list */1]);
-        return Tea_html.main(undefined, undefined, /* :: */[
-                    Tea_html.id("module-content"),
-                    /* :: */[
-                      Tea_html.class$prime("content"),
-                      /* [] */0
-                    ]
-                  ], /* :: */[
-                    Tea_html.h1(undefined, undefined, /* :: */[
-                          Tea_html.class$prime("title"),
-                          /* [] */0
-                        ], /* :: */[
-                          Tea_html.text(module_item[/* module_name */0]),
-                          /* [] */0
-                        ]),
-                    /* :: */[
-                      Tea_html.div(undefined, undefined, /* :: */[
-                            Tea_html.class$prime("info"),
-                            /* :: */[
-                              Vdom.prop("innerHTML", module_item[/* module_info */1]),
-                              /* [] */0
-                            ]
-                          ], /* [] */0),
-                      /* :: */[
-                        Tea_html.hr(undefined, undefined, /* [] */0, /* [] */0),
-                        /* :: */[
-                          Tea_html.section(undefined, undefined, /* :: */[
-                                Tea_html.id("elements"),
-                                /* [] */0
-                              ], /* :: */[
-                                Tea_html.ul(undefined, undefined, /* [] */0, view_sections(module_item)),
-                                /* [] */0
-                              ]),
-                          /* [] */0
-                        ]
-                      ]
-                    ]
-                  ]);
-      }
-      catch (exn){
-        if (exn === Caml_builtin_exceptions.not_found) {
-          return Tea_html.main(undefined, undefined, /* :: */[
-                      Tea_html.id("not-found"),
+        return /* :: */[
+                Tea_html.main(undefined, undefined, /* :: */[
+                      Tea_html.id("module-content"),
                       /* :: */[
                         Tea_html.class$prime("content"),
                         /* [] */0
@@ -619,11 +577,56 @@ function view_main(model) {
                             Tea_html.class$prime("title"),
                             /* [] */0
                           ], /* :: */[
-                            Tea_html.text("Not Found"),
+                            Tea_html.text(module_item[/* module_name */0]),
                             /* [] */0
                           ]),
-                      /* [] */0
-                    ]);
+                      /* :: */[
+                        Tea_html.div(undefined, undefined, /* :: */[
+                              Tea_html.class$prime("info"),
+                              /* :: */[
+                                Vdom.prop("innerHTML", module_item[/* module_info */1]),
+                                /* [] */0
+                              ]
+                            ], /* [] */0),
+                        /* :: */[
+                          Tea_html.hr(undefined, undefined, /* [] */0, /* [] */0),
+                          /* :: */[
+                            Tea_html.section(undefined, undefined, /* :: */[
+                                  Tea_html.id("elements"),
+                                  /* [] */0
+                                ], /* :: */[
+                                  Tea_html.ul(undefined, undefined, /* [] */0, view_sections(module_item)),
+                                  /* [] */0
+                                ]),
+                            /* [] */0
+                          ]
+                        ]
+                      ]
+                    ]),
+                /* [] */0
+              ];
+      }
+      catch (exn){
+        if (exn === Caml_builtin_exceptions.not_found) {
+          return /* :: */[
+                  Tea_html.main(undefined, undefined, /* :: */[
+                        Tea_html.id("not-found"),
+                        /* :: */[
+                          Tea_html.class$prime("content"),
+                          /* [] */0
+                        ]
+                      ], /* :: */[
+                        Tea_html.h1(undefined, undefined, /* :: */[
+                              Tea_html.class$prime("title"),
+                              /* [] */0
+                            ], /* :: */[
+                              Tea_html.text("Not Found"),
+                              /* [] */0
+                            ]),
+                        /* [] */0
+                      ]),
+                  /* [] */0
+                ];
         } else {
           throw exn;
         }
@@ -632,16 +635,16 @@ function view_main(model) {
 }
 
 function view(model) {
-  return Tea_html.div(undefined, undefined, /* [] */0, /* :: */[
+  return Tea_html.div(undefined, undefined, /* :: */[
+              Tea_html.id("site-container"),
+              /* [] */0
+            ], /* :: */[
               view_sidebar(model[/* sidebar_links */2]),
               /* :: */[
                 Tea_html.div(undefined, undefined, /* :: */[
                       Tea_html.id("main-container"),
                       /* [] */0
-                    ], /* :: */[
-                      view_main(model),
-                      /* [] */0
-                    ]),
+                    ], view_main(model)),
                 /* [] */0
               ]
             ]);

@@ -321,34 +321,37 @@ let view_sections module_item =
 let view_main model =
   match model.page with
   | { name = "docs_home" } ->
-    main [ id "home"; class' "content" ] (home_page ())
+    home_page ()
   | { name = "license" } ->
-    main [ id "license"; class' "content" ] (license ())
+    [ main [ id "license"; class' "content" ] (license ())
+    ]
   | { name } ->
     try
       let module_item = 
           model.module_list
           |> List.find (fun m -> m.module_name = name)
       in
-        main 
-          [ id "module-content"; class' "content" ] 
-          [ h1 [ class' "title" ] [ text module_item.module_name ] 
-          ; div [ class' "info"; innerHTML module_item.module_info ] []
-          ; hr [] []
-          ; section 
-            [ id "elements" ]
-            [ ul [] (view_sections module_item) ]
-          ]
+        [ main 
+            [ id "module-content"; class' "content" ] 
+            [ h1 [ class' "title" ] [ text module_item.module_name ] 
+            ; div [ class' "info"; innerHTML module_item.module_info ] []
+            ; hr [] []
+            ; section 
+              [ id "elements" ]
+              [ ul [] (view_sections module_item) ]
+            ]
+        ]
     with
       | Not_found ->
-        main 
-          [ id "not-found"; class' "content" ] 
-          [ h1 [ class' "title" ] [ text "Not Found" ] ]
+        [ main 
+            [ id "not-found"; class' "content" ] 
+            [ h1 [ class' "title" ] [ text "Not Found" ] ]
+        ]
 
 let view model =
-  div [] 
+  div [ id "site-container" ] 
     [ view_sidebar model.sidebar_links
-    ; div [ id "main-container" ] [view_main model]
+    ; div [ id "main-container" ] (view_main model)
     ]
 
 

@@ -19,6 +19,10 @@ $general-text: #4a4a4a;
 	box-sizing: border-box;
 }
 
+html, body, #site-container {
+	height: 100%;
+}
+
 body {
 	font-family: "Segoe UI", "Roboto", "Ubuntu", sans-serif;
 	margin: 0;
@@ -27,7 +31,6 @@ body {
 }
 
 ul {
-	list-style: none;
 	padding: 0;
 }
 
@@ -38,6 +41,7 @@ a {
 #main-container {
 	margin-left: 300px;
 	font-size: 1.05rem;
+	height: 100%;
 
 	.content {
 		padding: 2rem 3rem 4rem 3rem;
@@ -225,9 +229,36 @@ a {
 }
 
 #home {
-	
-	ul {
-		list-style: disc;
-		margin-left: 2rem;
+	min-height: 100%;
+	display: grid;
+	grid-template-areas: "content"
+											 "footer";
+	grid-template-rows: 1fr auto;
+	grid-template-columns: auto;
+
+	.content {
+		grid-area: content;
+
+		ul {
+			list-style: disc;
+			margin-left: 2rem;
+		}
+	}
+
+	.footer {
+		grid-area: footer;
+		padding: 0 1rem;
+		font-size: 0.7rem;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+
+		a {
+			color: $dark-grey;
+
+			&:hover, &:active {
+				text-decoration: underline;
+			}
+		}
 	}
 }

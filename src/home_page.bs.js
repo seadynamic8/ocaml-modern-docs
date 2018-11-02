@@ -5,113 +5,74 @@ var Tea_html = require("bucklescript-tea/src-ocaml/tea_html.js");
 
 function home_page() {
   return /* :: */[
-          Tea_html.h1(undefined, undefined, /* :: */[
-                Tea_html.class$prime("title"),
+          Tea_html.div(undefined, undefined, /* :: */[
+                Tea_html.id("home"),
                 /* [] */0
               ], /* :: */[
-                Tea_html.text("OCaml Standard Library - Modernized - Unofficial"),
-                /* [] */0
-              ]),
-          /* :: */[
-            Tea_html.p(undefined, undefined, /* [] */0, /* :: */[
-                  Tea_html.text("This is an unoffical version of the OCaml Standard Library docs\r\n        with a modernized theme.  It should (hopefully) be the same content as the\r\n        original just looks nicer and easier to find things.  If you are looking\r\n        for official website or docs, look under the logo on the sidebar."),
-                  /* [] */0
-                ]),
-            /* :: */[
-              Tea_html.p(undefined, undefined, /* [] */0, /* :: */[
-                    Tea_html.text("I couldn't stand the way the official docs looked, so I decided to\r\n        create my own styled version of it, maybe it can help others too."),
-                    /* [] */0
-                  ]),
-              /* :: */[
-                Tea_html.p(undefined, undefined, /* [] */0, /* :: */[
-                      Tea_html.text("It is open source.  The code I used to create this was put here at\r\n        Github: "),
+                Tea_html.main(undefined, undefined, /* :: */[
+                      Tea_html.class$prime("content"),
+                      /* [] */0
+                    ], /* :: */[
+                      Tea_html.h1(undefined, undefined, /* :: */[
+                            Tea_html.class$prime("title"),
+                            /* [] */0
+                          ], /* :: */[
+                            Tea_html.text("OCaml Standard Library - Modernized - Unofficial"),
+                            /* [] */0
+                          ]),
                       /* :: */[
-                        Tea_html.a(undefined, undefined, /* :: */[
-                              Tea_html.href("https://github.com/seadynamic8/ocaml-modern-docs"),
-                              /* [] */0
-                            ], /* :: */[
-                              Tea_html.text("https://github.com/seadynamic8/ocaml-modern-docs"),
-                              /* [] */0
-                            ]),
-                        /* [] */0
-                      ]
-                    ]),
-                /* :: */[
-                  Tea_html.ul(undefined, undefined, /* [] */0, /* :: */[
-                        Tea_html.li(undefined, undefined, /* [] */0, /* :: */[
-                              Tea_html.text("It's an example of using the following libraries: lambdasoup,\r\n          atdgen (from OCaml opam libraries) and bs-json, bucklescript-tea (from\r\n          the Bucklescript npm libraries)"),
+                        Tea_html.p(undefined, undefined, /* [] */0, /* :: */[
+                              Tea_html.text("This is an unoffical version of the OCaml Standard Library docs\r\n                with a modernized theme.  It should (hopefully) be the same content as the\r\n                original just looks nicer and easier to find things.  If you are looking\r\n                for official website or docs, look under the logo on the sidebar."),
                               /* [] */0
                             ]),
                         /* :: */[
-                          Tea_html.li(undefined, undefined, /* [] */0, /* :: */[
-                                Tea_html.text("I learned a lot from doing this and while a bit frustrating\r\n          because the original docs don't parse easily with not much structure\r\n          and things in the wrong places, it was fun.  Also, the divergence of\r\n          the two families (opam vs npm) wasn't fun either, but I got around it."),
+                          Tea_html.p(undefined, undefined, /* [] */0, /* :: */[
+                                Tea_html.text("I couldn't stand the way the official docs looked, so I decided to\r\n                create my own styled version of it, maybe it can help others too."),
                                 /* [] */0
                               ]),
                           /* :: */[
-                            Tea_html.li(undefined, undefined, /* [] */0, /* :: */[
-                                  Tea_html.text("If you want to use this, its a work in progress.  But let me\r\n          know if you have any major problems or suggestions.  Though I'm not\r\n          going to be devoting much time to it probably."),
-                                  /* [] */0
-                                ]),
-                            /* :: */[
-                              Tea_html.li(undefined, undefined, /* [] */0, /* :: */[
-                                    Tea_html.text("It was inspired by Elixir docs."),
-                                    /* [] */0
-                                  ]),
-                              /* :: */[
-                                Tea_html.li(undefined, undefined, /* [] */0, /* :: */[
-                                      Tea_html.text("I still have some more planned features."),
-                                      /* [] */0
-                                    ]),
-                                /* :: */[
-                                  Tea_html.li(undefined, undefined, /* [] */0, /* :: */[
-                                        Tea_html.text("Since I'm still learning OCaml, bear with me on the code, it\r\n            definitely needs some refactoring and could be done better."),
-                                        /* [] */0
-                                      ]),
-                                  /* [] */0
-                                ]
-                              ]
-                            ]
-                          ]
-                        ]
-                      ]),
-                  /* :: */[
-                    Tea_html.p(undefined, undefined, /* [] */0, /* :: */[
-                          Tea_html.text("<-------- Go checkout the docs!"),
-                          /* [] */0
-                        ]),
-                    /* :: */[
-                      Tea_html.br(/* [] */0),
-                      /* :: */[
-                        Tea_html.br(/* [] */0),
-                        /* :: */[
-                          Tea_html.hr(undefined, undefined, /* [] */0, /* [] */0),
-                          /* :: */[
-                            Tea_html.a(undefined, undefined, /* :: */[
-                                  Tea_html.href("#license"),
-                                  /* [] */0
-                                ], /* :: */[
-                                  Tea_html.text("Original License"),
-                                  /* [] */0
-                                ]),
-                            /* :: */[
-                              Tea_html.br(/* [] */0),
-                              /* :: */[
-                                Tea_html.br(/* [] */0),
-                                /* :: */[
-                                  Tea_html.br(/* [] */0),
+                            Tea_html.p(undefined, undefined, /* [] */0, /* :: */[
+                                  Tea_html.text("It is open source.  The code I used to create this was put here at\r\n                Github: "),
                                   /* :: */[
-                                    Tea_html.br(/* [] */0),
+                                    Tea_html.a(undefined, undefined, /* :: */[
+                                          Tea_html.href("https://github.com/seadynamic8/ocaml-modern-docs"),
+                                          /* [] */0
+                                        ], /* :: */[
+                                          Tea_html.text("https://github.com/seadynamic8/ocaml-modern-docs"),
+                                          /* [] */0
+                                        ]),
+                                    /* [] */0
+                                  ]
+                                ]),
+                            /* :: */[
+                              Tea_html.ul(undefined, undefined, /* [] */0, /* :: */[
+                                    Tea_html.li(undefined, undefined, /* [] */0, /* :: */[
+                                          Tea_html.text("It's an example of using the following libraries: lambdasoup,\r\n                  atdgen (from OCaml opam libraries) and bs-json, bucklescript-tea (from\r\n                  the Bucklescript npm libraries)"),
+                                          /* [] */0
+                                        ]),
                                     /* :: */[
-                                      Tea_html.br(/* [] */0),
+                                      Tea_html.li(undefined, undefined, /* [] */0, /* :: */[
+                                            Tea_html.text("I learned a lot from doing this and while a bit frustrating\r\n                  because the original docs don't parse easily with not much structure\r\n                  and things in the wrong places, it was fun.  Also, the divergence of\r\n                  the two families (opam vs npm) wasn't fun either, but I got around it."),
+                                            /* [] */0
+                                          ]),
                                       /* :: */[
-                                        Tea_html.br(/* [] */0),
+                                        Tea_html.li(undefined, undefined, /* [] */0, /* :: */[
+                                              Tea_html.text("If you want to use this, its a work in progress.  But let me\r\n                  know if you have any major problems or suggestions.  Though I'm not\r\n                  going to be devoting much time to it probably."),
+                                              /* [] */0
+                                            ]),
                                         /* :: */[
-                                          Tea_html.br(/* [] */0),
+                                          Tea_html.li(undefined, undefined, /* [] */0, /* :: */[
+                                                Tea_html.text("It was inspired by Elixir docs."),
+                                                /* [] */0
+                                              ]),
                                           /* :: */[
-                                            Tea_html.br(/* [] */0),
+                                            Tea_html.li(undefined, undefined, /* [] */0, /* :: */[
+                                                  Tea_html.text("I still have some more planned features."),
+                                                  /* [] */0
+                                                ]),
                                             /* :: */[
-                                              Tea_html.p(undefined, undefined, /* [] */0, /* :: */[
-                                                    Tea_html.text("Star Cache, LLC"),
+                                              Tea_html.li(undefined, undefined, /* [] */0, /* :: */[
+                                                    Tea_html.text("Since I'm still learning OCaml, bear with me on the code, it\r\n                    definitely needs some refactoring and could be done better."),
                                                     /* [] */0
                                                   ]),
                                               /* [] */0
@@ -120,19 +81,43 @@ function home_page() {
                                         ]
                                       ]
                                     ]
-                                  ]
-                                ]
+                                  ]),
+                              /* :: */[
+                                Tea_html.p(undefined, undefined, /* [] */0, /* :: */[
+                                      Tea_html.text("<-------- Go checkout the docs!"),
+                                      /* [] */0
+                                    ]),
+                                /* [] */0
                               ]
                             ]
                           ]
                         ]
                       ]
-                    ]
-                  ]
+                    ]),
+                /* :: */[
+                  Tea_html.footer(undefined, undefined, /* :: */[
+                        Tea_html.class$prime("footer"),
+                        /* [] */0
+                      ], /* :: */[
+                        Tea_html.a(undefined, undefined, /* :: */[
+                              Tea_html.href("#license"),
+                              /* [] */0
+                            ], /* :: */[
+                              Tea_html.text("Original License"),
+                              /* [] */0
+                            ]),
+                        /* :: */[
+                          Tea_html.p(undefined, undefined, /* [] */0, /* :: */[
+                                Tea_html.text("Star Cache, LLC"),
+                                /* [] */0
+                              ]),
+                          /* [] */0
+                        ]
+                      ]),
+                  /* [] */0
                 ]
-              ]
-            ]
-          ]
+              ]),
+          /* [] */0
         ];
 }
 
