@@ -238,7 +238,7 @@ let view_sidebar sidebar_links =
 
 let view_element_header name category content element_html =
   h5 
-    [ id name; class' "element" ] 
+    [ id name; class' "element-item" ] 
     [ span [ class' "category" ] [ text category ]
     ; text (name ^ content )
     ] :: element_html
@@ -287,7 +287,7 @@ let view_element element =
       |> view_element_header name "module type " (": sig .. end")
 
 let view_elements elements =
-  List.map (fun e -> li [] (view_element e)) elements
+  List.map (fun e -> li [ class' "element" ] (view_element e)) elements
 
 (* Sections *)
 

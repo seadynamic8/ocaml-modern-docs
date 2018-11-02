@@ -406,7 +406,7 @@ function view_element_header(name, category, content, element_html) {
           Tea_html.h5(undefined, undefined, /* :: */[
                 Tea_html.id(name),
                 /* :: */[
-                  Tea_html.class$prime("element"),
+                  Tea_html.class$prime("element-item"),
                   /* [] */0
                 ]
               ], /* :: */[
@@ -485,7 +485,10 @@ function view_element(element) {
 
 function view_elements(elements) {
   return List.map((function (e) {
-                return Tea_html.li(undefined, undefined, /* [] */0, view_element(e));
+                return Tea_html.li(undefined, undefined, /* :: */[
+                            Tea_html.class$prime("element"),
+                            /* [] */0
+                          ], view_element(e));
               }), elements);
 }
 
