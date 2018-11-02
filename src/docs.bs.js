@@ -635,7 +635,13 @@ function view(model) {
   return Tea_html.div(undefined, undefined, /* [] */0, /* :: */[
               view_sidebar(model[/* sidebar_links */2]),
               /* :: */[
-                view_main(model),
+                Tea_html.div(undefined, undefined, /* :: */[
+                      Tea_html.id("main-container"),
+                      /* [] */0
+                    ], /* :: */[
+                      view_main(model),
+                      /* [] */0
+                    ]),
                 /* [] */0
               ]
             ]);

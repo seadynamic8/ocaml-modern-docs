@@ -23,7 +23,7 @@ body {
 	font-family: "Segoe UI", "Roboto", "Ubuntu", sans-serif;
 	margin: 0;
 	color: $general-text;
-	line-height: 1.5;
+	line-height: 1.4;
 }
 
 ul {
@@ -35,10 +35,14 @@ a {
 	text-decoration: none;
 }
 
-.content {
+#main-container {
 	margin-left: 300px;
-	padding: 2rem 3rem 4rem 3rem;
-	font-size: 1.1rem;
+	font-size: 1.05rem;
+
+	.content {
+		padding: 2rem 3rem 4rem 3rem;
+		max-width: 950px;
+	}
 }
 
 .sidebar {
@@ -118,7 +122,7 @@ a {
 	.element {
 		font-family: "Overpass Mono", "Segoe UI", "Roboto", "Ubuntu", sans-serif;
 		font-weight: 600;
-		font-size: 1.03rem;
+		font-size: 0.98rem;
 		background-color: #f7f7f7;
 		padding: .5rem 1rem;
 		margin: 2rem 0 1rem;
@@ -190,7 +194,7 @@ a {
 		}
 
 		.info {
-			font-size: 1.1rem;
+			font-size: 1.05rem;
 		}
 	}
 

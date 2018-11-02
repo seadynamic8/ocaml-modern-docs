@@ -348,7 +348,7 @@ let view_main model =
 let view model =
   div [] 
     [ view_sidebar model.sidebar_links
-    ; (view_main model)
+    ; div [ id "main-container" ] [view_main model]
     ]
 
 
