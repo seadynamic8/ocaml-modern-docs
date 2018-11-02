@@ -128,6 +128,11 @@ function scrollToPosition(position) {
   var element = document.querySelector("#" + position);
   if (element !== null) {
     element.scrollIntoView();
+    element.classList.add("blink");
+    setTimeout((function () {
+            element.classList.remove("blink");
+            return /* () */0;
+          }), 1000);
     return /* () */0;
   } else {
     return 0;

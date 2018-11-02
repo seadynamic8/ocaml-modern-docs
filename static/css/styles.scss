@@ -4,6 +4,8 @@ $dark-grey: #404040;
 $sidebar-link-color: #eed3af;
 $ocaml-orange: #F48A32;
 $general-text: #4a4a4a;
+$element-bg-color: #f7f7f7;
+$blink-color: #ffbd2d;
 
 @mixin subtitle-header {
 	padding: 1rem 2rem;
@@ -136,7 +138,7 @@ a {
 		font-family: "Overpass Mono", "Segoe UI", "Roboto", "Ubuntu", sans-serif;
 		font-weight: 600;
 		font-size: 0.98rem;
-		background-color: #f7f7f7;
+		background-color: $element-bg-color;
 		padding: .5rem 1rem;
 		margin: 2rem 0 1rem;
 		border-left : 3px solid $ocaml-orange;
@@ -144,6 +146,15 @@ a {
 
 		.category {
 			color: $ocaml-orange;
+		}
+
+		&.blink {
+			animation: blinkText 0.5s;
+		}
+		@keyframes blinkText{
+			0% { background-color: $blink-color; }
+			99% { background-color: $blink-color; }
+			100% { background-color: $element-bg-color;	}
 		}
 	}
 

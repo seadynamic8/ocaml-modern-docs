@@ -12,6 +12,9 @@ external document : doc = "" [@@bs.val]
 external querySelector : doc -> string -> dom_element = "" [@@bs.send]
 external scrollIntoView : dom_element -> unit = "" [@@bs.send]
 external scrollTo : int -> int -> unit = "" [@@bs.val][@@bs.scope "window"]
+external add : dom_element -> string -> unit = "" [@@bs.send][@@bs.scope "classList"]
+external remove : dom_element -> string -> unit = "" [@@bs.send][@@bs.scope "classList"]
+external setTimeout : (unit -> unit) -> int -> unit = "" [@@bs.val]
 
 type module_name = string
 type page_location = string
@@ -115,7 +118,11 @@ let parse_hash_value hash =
 let scrollToPosition position =
   let element = document |. querySelector("#" ^ position) in
     if element <> Js.Nullable.null then
-      element |. scrollIntoView
+      begin
+        element |. scrollIntoView;
+        element |. add "blink";
+        setTimeout (fun () -> element |. remove "blink") 1000
+      end
 
 let setScrollPosition position =
   if position = "" then 
