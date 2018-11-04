@@ -5,13 +5,17 @@ var Fs = require("fs");
 var List = require("bs-platform/lib/js/list.js");
 var Vdom = require("bucklescript-tea/src-ocaml/vdom.js");
 var Block = require("bs-platform/lib/js/block.js");
+var $$String = require("bs-platform/lib/js/string.js");
 var Decoder = require("./decoder.bs.js");
 var License = require("./license.bs.js");
 var Tea_cmd = require("bucklescript-tea/src-ocaml/tea_cmd.js");
 var Tea_sub = require("bucklescript-tea/src-ocaml/tea_sub.js");
 var Tea_html = require("bucklescript-tea/src-ocaml/tea_html.js");
+var Tea_json = require("bucklescript-tea/src-ocaml/tea_json.js");
 var Tea_task = require("bucklescript-tea/src-ocaml/tea_task.js");
 var Home_page = require("./home_page.bs.js");
+var Pervasives = require("bs-platform/lib/js/pervasives.js");
+var Belt_MapString = require("bs-platform/lib/js/belt_MapString.js");
 var Tea_navigation = require("bucklescript-tea/src-ocaml/tea_navigation.js");
 var Caml_builtin_exceptions = require("bs-platform/lib/js/caml_builtin_exceptions.js");
 
@@ -24,6 +28,10 @@ function clickedSidebarLink(param_0, param_1) {
             param_0,
             param_1
           ]);
+}
+
+function updateSearchTerm(param_0) {
+  return /* UpdateSearchTerm */Block.__(2, [param_0]);
 }
 
 var json = JSON.parse(Fs.readFileSync("parser/modules.json", "utf8"));
@@ -81,7 +89,11 @@ function init(_, $$location) {
               /* [] */0
             ],
             /* module_list */get_module_list,
-            /* sidebar_links */create_sidebar_link_state(get_module_list),
+            /* sidebar : record */[
+              /* search_term */"",
+              /* search_results : [] */0,
+              /* sidebar_links */create_sidebar_link_state(get_module_list)
+            ],
             /* page : record */[
               /* name */"docs_home",
               /* position */""
@@ -148,62 +160,241 @@ function setScrollPosition(position) {
   }
 }
 
+function update_element_results(category, name, element_results) {
+  return Belt_MapString.update(element_results, category, (function (r) {
+                if (r !== undefined) {
+                  return /* :: */[
+                          name,
+                          r
+                        ];
+                } else {
+                  return /* :: */[
+                          name,
+                          /* [] */0
+                        ];
+                }
+              }));
+}
+
+function elements_search_results(element_results, search_term, section_elements) {
+  return List.fold_left((function (element_results, element) {
+                switch (element.tag | 0) {
+                  case 0 : 
+                      var name = element[0];
+                      if ($$String.lowercase(name).includes(search_term)) {
+                        return update_element_results("Type", name, element_results);
+                      } else {
+                        return element_results;
+                      }
+                  case 1 : 
+                      var name$1 = element[0];
+                      if ($$String.lowercase(name$1).includes(search_term)) {
+                        return update_element_results("Type", name$1, element_results);
+                      } else {
+                        return element_results;
+                      }
+                  case 2 : 
+                      var name$2 = element[0];
+                      if ($$String.lowercase(name$2).includes(search_term)) {
+                        return update_element_results("Function", name$2, element_results);
+                      } else {
+                        return element_results;
+                      }
+                  case 3 : 
+                      var name$3 = element[0];
+                      if ($$String.lowercase(name$3).includes(search_term)) {
+                        return update_element_results("Exception", name$3, element_results);
+                      } else {
+                        return element_results;
+                      }
+                  case 4 : 
+                      var name$4 = element[0];
+                      if ($$String.lowercase(name$4).includes(search_term)) {
+                        return update_element_results("Module", name$4, element_results);
+                      } else {
+                        return element_results;
+                      }
+                  case 5 : 
+                      var name$5 = element[0];
+                      if ($$String.lowercase(name$5).includes(search_term)) {
+                        return update_element_results("Module", name$5, element_results);
+                      } else {
+                        return element_results;
+                      }
+                  
+                }
+              }), element_results, section_elements);
+}
+
+function sections_search_results(search_result, search_term, sections) {
+  return List.fold_left((function (search_result, section) {
+                return /* record */[
+                        /* module_group */search_result[/* module_group */0],
+                        /* element_results */elements_search_results(search_result[/* element_results */1], search_term, section[/* elements */2])
+                      ];
+              }), search_result, sections);
+}
+
+function create_search_result(module_name) {
+  return /* record */[
+          /* module_group */module_name,
+          /* element_results */Belt_MapString.empty
+        ];
+}
+
+function get_search_results(search_term, module_list) {
+  return List.rev(List.fold_left((function (results, m) {
+                    var new_search_result_000 = /* module_group */m[/* module_name */0];
+                    var new_search_result = /* record */[
+                      new_search_result_000,
+                      /* element_results */Belt_MapString.empty
+                    ];
+                    var section_result = sections_search_results(new_search_result, search_term, m[/* sections */2]);
+                    if (Belt_MapString.isEmpty(section_result[/* element_results */1])) {
+                      return results;
+                    } else {
+                      return /* :: */[
+                              section_result,
+                              results
+                            ];
+                    }
+                  }), /* [] */0, module_list));
+}
+
+function onEnter(msg) {
+  var isEnter = function (code) {
+    if (code === 13) {
+      return Tea_json.Decoder[/* succeed */24](msg);
+    } else {
+      return Tea_json.Decoder[/* fail */25]("not ENTER");
+    }
+  };
+  return Tea_html.on("keydown", Tea_json.Decoder[/* andThen */27](isEnter, Tea_html.keyCode));
+}
+
 function update(model, msg) {
   if (typeof msg === "number") {
-    setScrollPosition(model[/* page */3][/* position */1]);
-    return /* tuple */[
-            model,
-            Tea_cmd.none
-          ];
-  } else if (msg.tag) {
-    var is_functions = msg[1];
-    var sidebar_link_name = msg[0];
-    var flipSelected = function (s) {
-      if (s[/* name */0] === sidebar_link_name) {
-        if (is_functions) {
-          return /* record */[
-                  /* name */s[/* name */0],
-                  /* selected */s[/* selected */1],
-                  /* functions */s[/* functions */2],
-                  /* functions_selected */!s[/* functions_selected */3]
+    switch (msg) {
+      case 0 : 
+          setScrollPosition(model[/* page */3][/* position */1]);
+          return /* tuple */[
+                  model,
+                  Tea_cmd.none
                 ];
-        } else {
-          return /* record */[
-                  /* name */s[/* name */0],
-                  /* selected */!s[/* selected */1],
-                  /* functions */s[/* functions */2],
-                  /* functions_selected */s[/* functions_selected */3]
+      case 1 : 
+          if (model[/* sidebar */2][/* search_term */0].length > 1) {
+            var search_term = $$String.lowercase(model[/* sidebar */2][/* search_term */0]);
+            var search_results = get_search_results(search_term, model[/* module_list */1]);
+            var init = model[/* sidebar */2];
+            return /* tuple */[
+                    /* record */[
+                      /* history */model[/* history */0],
+                      /* module_list */model[/* module_list */1],
+                      /* sidebar : record */[
+                        /* search_term */init[/* search_term */0],
+                        /* search_results */search_results,
+                        /* sidebar_links */init[/* sidebar_links */2]
+                      ],
+                      /* page */model[/* page */3]
+                    ],
+                    Tea_cmd.none
+                  ];
+          } else {
+            return /* tuple */[
+                    model,
+                    Tea_cmd.none
+                  ];
+          }
+      case 2 : 
+          var init$1 = model[/* sidebar */2];
+          return /* tuple */[
+                  /* record */[
+                    /* history */model[/* history */0],
+                    /* module_list */model[/* module_list */1],
+                    /* sidebar : record */[
+                      /* search_term */"",
+                      /* search_results : [] */0,
+                      /* sidebar_links */init$1[/* sidebar_links */2]
+                    ],
+                    /* page */model[/* page */3]
+                  ],
+                  Tea_cmd.none
                 ];
-        }
-      } else {
-        return s;
-      }
-    };
-    return /* tuple */[
-            /* record */[
-              /* history */model[/* history */0],
-              /* module_list */model[/* module_list */1],
-              /* sidebar_links */List.map(flipSelected, model[/* sidebar_links */2]),
-              /* page */model[/* page */3]
-            ],
-            Tea_cmd.none
-          ];
+      
+    }
   } else {
-    var $$location = msg[0];
-    return /* tuple */[
-            /* record */[
-              /* history : :: */[
-                $$location,
-                model[/* history */0]
-              ],
-              /* module_list */model[/* module_list */1],
-              /* sidebar_links */model[/* sidebar_links */2],
-              /* page */parse_hash_value($$location[/* hash */7])
-            ],
-            Tea_task.perform((function () {
-                    return /* Scroll */0;
-                  }), Tea_task.succeed(/* () */0))
-          ];
+    switch (msg.tag | 0) {
+      case 0 : 
+          var $$location = msg[0];
+          return /* tuple */[
+                  /* record */[
+                    /* history : :: */[
+                      $$location,
+                      model[/* history */0]
+                    ],
+                    /* module_list */model[/* module_list */1],
+                    /* sidebar */model[/* sidebar */2],
+                    /* page */parse_hash_value($$location[/* hash */7])
+                  ],
+                  Tea_task.perform((function () {
+                          return /* Scroll */0;
+                        }), Tea_task.succeed(/* () */0))
+                ];
+      case 1 : 
+          var is_functions = msg[1];
+          var sidebar_link_name = msg[0];
+          var flipSelected = function (s) {
+            if (s[/* name */0] === sidebar_link_name) {
+              if (is_functions) {
+                return /* record */[
+                        /* name */s[/* name */0],
+                        /* selected */s[/* selected */1],
+                        /* functions */s[/* functions */2],
+                        /* functions_selected */!s[/* functions_selected */3]
+                      ];
+              } else {
+                return /* record */[
+                        /* name */s[/* name */0],
+                        /* selected */!s[/* selected */1],
+                        /* functions */s[/* functions */2],
+                        /* functions_selected */s[/* functions_selected */3]
+                      ];
+              }
+            } else {
+              return s;
+            }
+          };
+          var init$2 = model[/* sidebar */2];
+          return /* tuple */[
+                  /* record */[
+                    /* history */model[/* history */0],
+                    /* module_list */model[/* module_list */1],
+                    /* sidebar : record */[
+                      /* search_term */init$2[/* search_term */0],
+                      /* search_results */init$2[/* search_results */1],
+                      /* sidebar_links */List.map(flipSelected, model[/* sidebar */2][/* sidebar_links */2])
+                    ],
+                    /* page */model[/* page */3]
+                  ],
+                  Tea_cmd.none
+                ];
+      case 2 : 
+          var init$3 = model[/* sidebar */2];
+          return /* tuple */[
+                  /* record */[
+                    /* history */model[/* history */0],
+                    /* module_list */model[/* module_list */1],
+                    /* sidebar : record */[
+                      /* search_term */msg[0],
+                      /* search_results */init$3[/* search_results */1],
+                      /* sidebar_links */init$3[/* sidebar_links */2]
+                    ],
+                    /* page */model[/* page */3]
+                  ],
+                  Tea_cmd.none
+                ];
+      
+    }
   }
 }
 
@@ -324,7 +515,63 @@ function module_sidebar_links(sidebar_links) {
   return List.map(sidebar_link, sidebar_links);
 }
 
-function view_sidebar(sidebar_links) {
+function sidebar_element_results(search_results) {
+  return List.map((function (param) {
+                return Tea_html.ul(undefined, undefined, /* :: */[
+                            Tea_html.class$prime("search-result-category-list"),
+                            /* [] */0
+                          ], /* :: */[
+                            Tea_html.h5(undefined, undefined, /* :: */[
+                                  Tea_html.class$prime("search-result-category"),
+                                  /* [] */0
+                                ], /* :: */[
+                                  Tea_html.text(param[0]),
+                                  /* [] */0
+                                ]),
+                            /* :: */[
+                              Tea_html.ul(undefined, undefined, /* :: */[
+                                    Tea_html.class$prime("search-result-elements-list"),
+                                    /* [] */0
+                                  ], List.map((function (name) {
+                                          return Tea_html.li(undefined, undefined, /* :: */[
+                                                      Tea_html.class$prime("search-result-element"),
+                                                      /* [] */0
+                                                    ], /* :: */[
+                                                      Tea_html.a(undefined, undefined, /* :: */[
+                                                            Tea_html.href("#" + (search_results[/* module_group */0] + ("-" + name))),
+                                                            /* [] */0
+                                                          ], /* :: */[
+                                                            Tea_html.text(name),
+                                                            /* [] */0
+                                                          ]),
+                                                      /* [] */0
+                                                    ]);
+                                        }), param[1])),
+                              /* [] */0
+                            ]
+                          ]);
+              }), List.rev(Belt_MapString.toList(search_results[/* element_results */1])));
+}
+
+function sidebar_search_results(search_results) {
+  return List.map((function (sr) {
+                return Tea_html.ul(undefined, undefined, /* :: */[
+                            Tea_html.class$prime("search-result-module-list"),
+                            /* [] */0
+                          ], /* :: */[
+                            Tea_html.a(undefined, undefined, /* :: */[
+                                  Tea_html.href("#" + sr[/* module_group */0]),
+                                  /* [] */0
+                                ], /* :: */[
+                                  Tea_html.text(sr[/* module_group */0]),
+                                  /* [] */0
+                                ]),
+                            sidebar_element_results(sr)
+                          ]);
+              }), search_results);
+}
+
+function view_sidebar(sidebar) {
   return Tea_html.aside(undefined, undefined, /* :: */[
               Tea_html.class$prime("sidebar"),
               /* [] */0
@@ -373,30 +620,93 @@ function view_sidebar(sidebar_links) {
                           /* [] */0
                         ]),
                     /* :: */[
-                      Tea_html.h6(undefined, undefined, /* [] */0, /* :: */[
+                      Tea_html.h6(undefined, undefined, /* :: */[
+                            Tea_html.id("back-link"),
+                            /* [] */0
+                          ], /* :: */[
                             Tea_html.a(undefined, undefined, /* :: */[
                                   Tea_html.href("https://www.streamingspring.com"),
                                   /* [] */0
                                 ], /* :: */[
-                                  Tea_html.text("Back to Blog"),
+                                  Tea_html.text("<- Back to Blog"),
                                   /* [] */0
                                 ]),
                             /* [] */0
                           ]),
                       /* :: */[
-                        Tea_html.h3(undefined, undefined, /* :: */[
-                              Tea_html.id("modules-title"),
-                              /* [] */0
-                            ], /* :: */[
-                              Tea_html.text("Modules"),
-                              /* [] */0
-                            ]),
+                        Tea_html.input$prime(undefined, undefined, /* :: */[
+                              Tea_html.type$prime("text"),
+                              /* :: */[
+                                Tea_html.id("search-bar"),
+                                /* :: */[
+                                  Tea_html.value(sidebar[/* search_term */0]),
+                                  /* :: */[
+                                    Tea_html.onInput(undefined, updateSearchTerm),
+                                    /* :: */[
+                                      onEnter(/* Search */1),
+                                      /* [] */0
+                                    ]
+                                  ]
+                                ]
+                              ]
+                            ], /* [] */0),
                         /* :: */[
-                          Tea_html.ul(undefined, undefined, /* :: */[
-                                Tea_html.class$prime("module-links"),
-                                /* [] */0
-                              ], List.map(sidebar_link, sidebar_links)),
-                          /* [] */0
+                          Tea_html.div(undefined, undefined, /* :: */[
+                                Tea_html.id("search-results"),
+                                /* :: */[
+                                  Tea_html.classList(/* :: */[
+                                        /* tuple */[
+                                          "show-results",
+                                          List.length(sidebar[/* search_results */1]) > 0
+                                        ],
+                                        /* [] */0
+                                      ]),
+                                  /* [] */0
+                                ]
+                              ], Pervasives.$at(/* :: */[
+                                    Tea_html.div(undefined, undefined, /* :: */[
+                                          Tea_html.id("search-results-header"),
+                                          /* [] */0
+                                        ], /* :: */[
+                                          Tea_html.h3(undefined, undefined, /* :: */[
+                                                Tea_html.id("search-results-title"),
+                                                /* [] */0
+                                              ], /* :: */[
+                                                Tea_html.text("Results"),
+                                                /* [] */0
+                                              ]),
+                                          /* :: */[
+                                            Tea_html.button(undefined, undefined, /* :: */[
+                                                  Tea_html.id("clear-button"),
+                                                  /* :: */[
+                                                    Tea_html.onClick(/* Clear */2),
+                                                    /* [] */0
+                                                  ]
+                                                ], /* :: */[
+                                                  Tea_html.text("Clear"),
+                                                  /* [] */0
+                                                ]),
+                                            /* [] */0
+                                          ]
+                                        ]),
+                                    /* [] */0
+                                  ], sidebar_search_results(sidebar[/* search_results */1]))),
+                          /* :: */[
+                            Tea_html.h3(undefined, undefined, /* :: */[
+                                  Tea_html.id("modules-title"),
+                                  /* [] */0
+                                ], /* :: */[
+                                  Tea_html.text("Modules"),
+                                  /* [] */0
+                                ]),
+                            /* :: */[
+                              Tea_html.ul(undefined, undefined, /* :: */[
+                                    Tea_html.class$prime("module-links"),
+                                    /* [] */0
+                                  ], List.map(sidebar_link, sidebar[/* sidebar_links */2])),
+                              /* [] */0
+                            ]
+                          ]
                         ]
                       ]
                     ]
@@ -647,7 +957,7 @@ function view(model) {
               Tea_html.id("site-container"),
               /* [] */0
             ], /* :: */[
-              view_sidebar(model[/* sidebar_links */2]),
+              view_sidebar(model[/* sidebar */2]),
               /* :: */[
                 Tea_html.div(undefined, undefined, /* :: */[
                       Tea_html.id("main-container"),
@@ -674,10 +984,17 @@ var Task = 0;
 
 var scroll = /* Scroll */0;
 
+var search = /* Search */1;
+
+var clear = /* Clear */2;
+
 exports.Task = Task;
 exports.urlChange = urlChange;
 exports.clickedSidebarLink = clickedSidebarLink;
 exports.scroll = scroll;
+exports.updateSearchTerm = updateSearchTerm;
+exports.search = search;
+exports.clear = clear;
 exports.get_module_list = get_module_list;
 exports.get_function_names = get_function_names;
 exports.functions_in_sub_sections = functions_in_sub_sections;
@@ -688,6 +1005,12 @@ exports.init = init;
 exports.parse_hash_value = parse_hash_value;
 exports.scrollToPosition = scrollToPosition;
 exports.setScrollPosition = setScrollPosition;
+exports.update_element_results = update_element_results;
+exports.elements_search_results = elements_search_results;
+exports.sections_search_results = sections_search_results;
+exports.create_search_result = create_search_result;
+exports.get_search_results = get_search_results;
+exports.onEnter = onEnter;
 exports.update = update;
 exports.innerHTML = innerHTML;
 exports.function_links = function_links;
@@ -695,6 +1018,8 @@ exports.sidebar_functions = sidebar_functions;
 exports.sublist_sidebar = sublist_sidebar;
 exports.sidebar_link = sidebar_link;
 exports.module_sidebar_links = module_sidebar_links;
+exports.sidebar_element_results = sidebar_element_results;
+exports.sidebar_search_results = sidebar_search_results;
 exports.view_sidebar = view_sidebar;
 exports.view_element_header = view_element_header;
 exports.view_element_info = view_element_info;
