@@ -325,20 +325,17 @@ let all_files =
 let _ =
   let ch = open_out output_filename in
 
-  let all_modules =
-    all_files
-    |> List.map (fun file ->
-      try
-        parse_file (index_dir ^ file)
-      with
-        | Failure msg ->
-          print_endline ("error file: " ^ file ^ "\n error msg: " ^ msg);
-          blank_module
-    )
-  in
-    all_modules
-    |> Parser_j.string_of_modules
-    |> Yojson.Safe.prettify
-    |> output_string ch;
+  all_files
+  |> List.map (fun file ->
+    try
+      parse_file (index_dir ^ file)
+    with
+      | Failure msg ->
+        print_endline ("error file: " ^ file ^ "\n error msg: " ^ msg);
+        blank_module
+  )
+  |> Parser_j.string_of_modules
+  |> Yojson.Safe.prettify
+  |> output_string ch;
 
-    close_out ch
+  close_out ch
