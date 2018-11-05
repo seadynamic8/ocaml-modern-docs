@@ -7,16 +7,6 @@ $general-text: #4a4a4a;
 $element-bg-color: #f7f7f7;
 $blink-color: #ffbd2d;
 
-@mixin subtitle-header {
-	padding: 1rem 2rem;
-	margin: 2rem 0 1rem;
-	border: 1px solid #ffe6b9;
-	border-radius: 2px;
-	background-color: orange;
-	color: white;
-	font-weight: 500;
-}
-
 * {
 	box-sizing: border-box;
 }
@@ -48,143 +38,6 @@ a {
 	.content {
 		padding: 2rem 3rem 4rem 3rem;
 		max-width: 950px;
-	}
-}
-
-#module-content {
-
-	a {
-		cursor: text;
-		pointer-events: none;
-		color: inherit;
-	}
-
-	ul,
-	.element {
-		list-style: none;
-	}
-
-	.section {
-		.subtitle {
-			@include subtitle-header;
-		}
-	}
-
-	.element-item {
-		font-family: "Overpass Mono", "Segoe UI", "Roboto", "Ubuntu", sans-serif;
-		font-weight: 600;
-		font-size: 0.98rem;
-		background-color: $element-bg-color;
-		padding: .5rem 1rem;
-		margin: 2rem 0 1rem;
-		border-left : 3px solid $ocaml-orange;
-		color: black;
-
-		.category {
-			color: $ocaml-orange;
-		}
-
-		&.blink {
-			animation: blinkText 0.5s;
-		}
-		@keyframes blinkText{
-			0% { background-color: $blink-color; }
-			99% { background-color: $blink-color; }
-			100% { background-color: $element-bg-color;	}
-		}
-	}
-
-	.sub-section {
-		margin-left: 2rem;
-
-		.subtitle {
-			font-size: 1.5rem;
-			font-weight: 500;
-			background-color: #ffbd42;
-		}
-	}
-
-	p {
-		margin-bottom: 0.7rem;
-	}
-
-	.codepre .code {
-		border: 0;
-		font-size: 0.8rem;
-	}
-
-	.code {
-		border-radius: 2px;
-		color: #465F91;
-		background-color: #f5f5f5;
-		padding: 0.1rem 0.3rem;
-		font-family: "Overpass Mono", "Segoe UI", "Roboto", "Ubuntu", sans-serif;
-		font-weight: 400;
-		font-size: 1rem;
-
-		.constructor {
-			color: $ocaml-orange;
-		}
-
-		.string {
-			color: #6f6ff5;
-		}
-	}
-
-	table {
-		font-size: 1.27rem;
-		margin-left: 1rem;
-		margin-bottom: 1rem;
-
-		.typefieldcomment code {
-			color: #465F91;
-		}
-
-		code {
-			background-color: inherit;
-			color: #465F91;
-			font-weight: bold;
-
-			.constructor {
-				color: $ocaml-orange;
-			}
-
-			.type {
-				color: #6196ff;
-			}
-		}
-
-		.info {
-			font-size: 1.05rem;
-		}
-	}
-
-	.info {
-		margin: 0 1.5rem;
-
-		// Hack - the h2 was nested inside the info some reason
-		h2 {
-			@include subtitle-header;
-			margin: 2rem -1.5rem 1rem;
-		}
-
-		ul {
-			margin: 1rem 2rem;
-
-			li {
-				list-style: disc outside;
-			}
-
-			ul li {
-				list-style-type: circle;
-			}
-		}
-
-		.warning {
-			color: red;
-			font-weight: 600;
-			margin-right: 1rem;
-		}
 	}
 }
 
@@ -223,4 +76,5 @@ a {
 	}
 }
 
-@import "sidebar.scss"
+@import "sidebar.scss";
+@import "content.scss";
