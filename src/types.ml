@@ -22,6 +22,7 @@ type msg
   | UpdateSearchTerm of search_term
   | Search
   | Clear
+  | ClickedSidebarIcon
   [@@bs.deriving accessors]
 
 type page =
@@ -45,6 +46,7 @@ type sidebar =
   { search_term : search_term
   ; search_results : search_result list
   ; sidebar_links : sidebar_link list
+  ; icon_selected : bool
   }
 
 type model =

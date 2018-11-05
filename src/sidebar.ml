@@ -98,39 +98,56 @@ let sidebar_search_results search_results =
       ]
    ] @ (sidebar_search_results_list search_results)
 
-let view_sidebar sidebar =
-  aside [ class' "sidebar" ]
-    [ a
+let sidebar_content sidebar =
+  [ div
+      [ id "search-results"
+      ; classList [ "show-results", List.length sidebar.search_results > 0 ]
+      ]
+      (sidebar_search_results sidebar.search_results)
+  ; h3 [ id "modules-title" ] [ text "Modules" ]
+  ; ul
+      [ class' "module-links" ]
+      (module_sidebar_links sidebar.sidebar_links)
+  ]
+
+let sidebar_header sidebar =
+  [ a
       [ href "#docs_home" ]
       [ img [ src "http://ocaml.org/img/colour-logo-white.svg"; id "logo" ] []
       ]
-    ; h5 [ id "version" ] [ text "v4.07 (Unofficial)" ]
-    ; h6
-        []
-        [ a
-            [ href "https://caml.inria.fr/pub/docs/manual-ocaml-4.07/" ]
-            [ text "Official Docs" ]
+  ; h5 [ id "version" ] [ text "v4.07 (Unofficial)" ]
+  ; h6
+      []
+      [ a
+          [ href "https://caml.inria.fr/pub/docs/manual-ocaml-4.07/" ]
+          [ text "Official Docs" ]
+      ]
+  ; h6 [] [ a [ href "https://ocaml.org/" ] [ text "Official Website" ] ]
+  ; h6
+      [ id "back-link" ]
+      [ a [ href "https://www.streamingspring.com" ]
+          [ text "<- Back to Blog" ]
+      ]
+  ; input'
+      [ type' "text"
+      ; id "search-bar"
+      ; value sidebar.search_term
+      ; onInput updateSearchTerm
+      ; onEnter Search ]
+      []
+  ]
+
+let view_sidebar sidebar =
+  aside
+    [ classList
+        [ "sidebar", true
+        ; "selected", sidebar.icon_selected
         ]
-    ; h6 [] [ a [ href "https://ocaml.org/" ] [ text "Official Website" ] ]
-    ; h6
-        [ id "back-link" ]
-        [ a [ href "https://www.streamingspring.com" ]
-            [ text "<- Back to Blog" ]
-        ]
-    ; input'
-        [ type' "text"
-        ; id "search-bar"
-        ; value sidebar.search_term
-        ; onInput updateSearchTerm
-        ; onEnter Search ]
-        []
+    ]
+    [ div
+        [ id "sidebar-header" ]
+        (sidebar_header sidebar)
     ; div
-        [ id "search-results"
-        ; classList [ "show-results", List.length sidebar.search_results > 0 ]
-        ]
-        (sidebar_search_results sidebar.search_results)
-    ; h3 [ id "modules-title" ] [ text "Modules" ]
-    ; ul
-        [ class' "module-links" ]
-        (module_sidebar_links sidebar.sidebar_links)
+        [ id "sidebar-content" ]
+        (sidebar_content sidebar)
     ]

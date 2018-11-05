@@ -67,6 +67,7 @@ let init () location =
     { search_term = ""
     ; search_results = []
     ; sidebar_links = create_sidebar_link_state module_list
+    ; icon_selected = false
     }
   ; page =
     { name = "docs_home"
@@ -84,7 +85,7 @@ let parse_hash_value hash =
     { name = Js.String.substr ~from: 1 name; position = "" }
   | _ -> { name = ""; position = "" }
 
-let flipSelected sidebar_link_name is_functions sidebar_link =
+let flipSidebarLinkSelected sidebar_link_name is_functions sidebar_link =
   if sidebar_link.name = sidebar_link_name then
     begin match is_functions with
     | true ->
@@ -94,6 +95,12 @@ let flipSelected sidebar_link_name is_functions sidebar_link =
     end
   else
     sidebar_link
+
+let flipSidebarIconSelected condition sidebar =
+  if condition then
+    { sidebar with icon_selected = not sidebar.icon_selected }
+  else
+    sidebar
 
 let scrollToPosition position =
   let element = document |. querySelector("#" ^ position) in
@@ -177,15 +184,24 @@ let get_search_results search_term module_list =
 let update model msg =
   match msg with
   | UrlChange location ->
+      let icon_selected =
+        if model.sidebar.icon_selected then
+          not model.sidebar.icon_selected
+        else
+          model.sidebar.icon_selected
+      in
       { model with
         history = location :: model.history
       ; page = parse_hash_value location.Web.Location.hash
+      ; sidebar = { model.sidebar with icon_selected }
       },
       Task.perform (fun _ -> Scroll) (Task.succeed ())
 
   | ClickedSidebarLink (sidebar_link_name, is_functions) ->
       let sidebar_links =
-        List.map (flipSelected sidebar_link_name is_functions) model.sidebar.sidebar_links
+        List.map
+          (flipSidebarLinkSelected sidebar_link_name is_functions)
+          model.sidebar.sidebar_links
       in
       { model with sidebar = { model.sidebar with sidebar_links }
       }, Cmd.none
@@ -215,6 +231,13 @@ let update model msg =
         }
       }, Cmd.none
 
+  | ClickedSidebarIcon ->
+      { model with
+        sidebar =
+          { model.sidebar with
+            icon_selected = not model.sidebar.icon_selected }
+      }, Cmd.none
+
 
 (* ------------ ViEW -------------- *)
 
@@ -242,7 +265,21 @@ let view_main model =
 
 let view model =
   div [ id "site-container" ]
-    [ view_sidebar model.sidebar
+    [ div
+        [ id "backdrop"
+        ; classList [ "selected", model.sidebar.icon_selected ]
+        ; onClick ClickedSidebarIcon
+        ]
+        []
+    ; view_sidebar model.sidebar
+    ; i
+        [ classList
+            [ "fas fa-bars fa-lg", true
+            ; "selected", model.sidebar.icon_selected
+            ]
+        ; id "sidebar-icon"
+        ; onClick ClickedSidebarIcon
+        ] []
     ; div [ id "main-container" ] (view_main model)
     ]
 

@@ -76,7 +76,8 @@ function init(_, $$location) {
             /* sidebar : record */[
               /* search_term */"",
               /* search_results : [] */0,
-              /* sidebar_links */create_sidebar_link_state(get_module_list)
+              /* sidebar_links */create_sidebar_link_state(get_module_list),
+              /* icon_selected */false
             ],
             /* page : record */[
               /* name */"docs_home",
@@ -120,7 +121,7 @@ function parse_hash_value(hash) {
   }
 }
 
-function flipSelected(sidebar_link_name, is_functions, sidebar_link) {
+function flipSidebarLinkSelected(sidebar_link_name, is_functions, sidebar_link) {
   if (sidebar_link[/* name */0] === sidebar_link_name) {
     if (is_functions) {
       return /* record */[
@@ -139,6 +140,19 @@ function flipSelected(sidebar_link_name, is_functions, sidebar_link) {
     }
   } else {
     return sidebar_link;
+  }
+}
+
+function flipSidebarIconSelected(condition, sidebar) {
+  if (condition) {
+    return /* record */[
+            /* search_term */sidebar[/* search_term */0],
+            /* search_results */sidebar[/* search_results */1],
+            /* sidebar_links */sidebar[/* sidebar_links */2],
+            /* icon_selected */!sidebar[/* icon_selected */3]
+          ];
+  } else {
+    return sidebar;
   }
 }
 
@@ -288,7 +302,8 @@ function update(model, msg) {
                       /* sidebar : record */[
                         /* search_term */init[/* search_term */0],
                         /* search_results */search_results,
-                        /* sidebar_links */init[/* sidebar_links */2]
+                        /* sidebar_links */init[/* sidebar_links */2],
+                        /* icon_selected */init[/* icon_selected */3]
                       ],
                       /* page */model[/* page */3]
                     ],
@@ -309,7 +324,24 @@ function update(model, msg) {
                     /* sidebar : record */[
                       /* search_term */"",
                       /* search_results : [] */0,
-                      /* sidebar_links */init$1[/* sidebar_links */2]
+                      /* sidebar_links */init$1[/* sidebar_links */2],
+                      /* icon_selected */init$1[/* icon_selected */3]
+                    ],
+                    /* page */model[/* page */3]
+                  ],
+                  Tea_cmd.none
+                ];
+      case 3 : 
+          var init$2 = model[/* sidebar */2];
+          return /* tuple */[
+                  /* record */[
+                    /* history */model[/* history */0],
+                    /* module_list */model[/* module_list */1],
+                    /* sidebar : record */[
+                      /* search_term */init$2[/* search_term */0],
+                      /* search_results */init$2[/* search_results */1],
+                      /* sidebar_links */init$2[/* sidebar_links */2],
+                      /* icon_selected */!model[/* sidebar */2][/* icon_selected */3]
                     ],
                     /* page */model[/* page */3]
                   ],
@@ -321,6 +353,8 @@ function update(model, msg) {
     switch (msg.tag | 0) {
       case 0 : 
           var $$location = msg[0];
+          var icon_selected = model[/* sidebar */2][/* icon_selected */3] ? !model[/* sidebar */2][/* icon_selected */3] : model[/* sidebar */2][/* icon_selected */3];
+          var init$3 = model[/* sidebar */2];
           return /* tuple */[
                   /* record */[
                     /* history : :: */[
@@ -328,7 +362,12 @@ function update(model, msg) {
                       model[/* history */0]
                     ],
                     /* module_list */model[/* module_list */1],
-                    /* sidebar */model[/* sidebar */2],
+                    /* sidebar : record */[
+                      /* search_term */init$3[/* search_term */0],
+                      /* search_results */init$3[/* search_results */1],
+                      /* sidebar_links */init$3[/* sidebar_links */2],
+                      /* icon_selected */icon_selected
+                    ],
                     /* page */parse_hash_value($$location[/* hash */7])
                   ],
                   Tea_task.perform((function () {
@@ -339,32 +378,34 @@ function update(model, msg) {
           var is_functions = msg[1];
           var sidebar_link_name = msg[0];
           var sidebar_links = List.map((function (param) {
-                  return flipSelected(sidebar_link_name, is_functions, param);
+                  return flipSidebarLinkSelected(sidebar_link_name, is_functions, param);
                 }), model[/* sidebar */2][/* sidebar_links */2]);
-          var init$2 = model[/* sidebar */2];
+          var init$4 = model[/* sidebar */2];
           return /* tuple */[
                   /* record */[
                     /* history */model[/* history */0],
                     /* module_list */model[/* module_list */1],
                     /* sidebar : record */[
-                      /* search_term */init$2[/* search_term */0],
-                      /* search_results */init$2[/* search_results */1],
-                      /* sidebar_links */sidebar_links
+                      /* search_term */init$4[/* search_term */0],
+                      /* search_results */init$4[/* search_results */1],
+                      /* sidebar_links */sidebar_links,
+                      /* icon_selected */init$4[/* icon_selected */3]
                     ],
                     /* page */model[/* page */3]
                   ],
                   Tea_cmd.none
                 ];
       case 2 : 
-          var init$3 = model[/* sidebar */2];
+          var init$5 = model[/* sidebar */2];
           return /* tuple */[
                   /* record */[
                     /* history */model[/* history */0],
                     /* module_list */model[/* module_list */1],
                     /* sidebar : record */[
                       /* search_term */msg[0],
-                      /* search_results */init$3[/* search_results */1],
-                      /* sidebar_links */init$3[/* sidebar_links */2]
+                      /* search_results */init$5[/* search_results */1],
+                      /* sidebar_links */init$5[/* sidebar_links */2],
+                      /* icon_selected */init$5[/* icon_selected */3]
                     ],
                     /* page */model[/* page */3]
                   ],
@@ -431,13 +472,55 @@ function view(model) {
               Tea_html.id("site-container"),
               /* [] */0
             ], /* :: */[
-              Sidebar.view_sidebar(model[/* sidebar */2]),
+              Tea_html.div(undefined, undefined, /* :: */[
+                    Tea_html.id("backdrop"),
+                    /* :: */[
+                      Tea_html.classList(/* :: */[
+                            /* tuple */[
+                              "selected",
+                              model[/* sidebar */2][/* icon_selected */3]
+                            ],
+                            /* [] */0
+                          ]),
+                      /* :: */[
+                        Tea_html.onClick(/* ClickedSidebarIcon */3),
+                        /* [] */0
+                      ]
+                    ]
+                  ], /* [] */0),
               /* :: */[
-                Tea_html.div(undefined, undefined, /* :: */[
-                      Tea_html.id("main-container"),
-                      /* [] */0
-                    ], view_main(model)),
-                /* [] */0
+                Sidebar.view_sidebar(model[/* sidebar */2]),
+                /* :: */[
+                  Tea_html.i(undefined, undefined, /* :: */[
+                        Tea_html.classList(/* :: */[
+                              /* tuple */[
+                                "fas fa-bars fa-lg",
+                                true
+                              ],
+                              /* :: */[
+                                /* tuple */[
+                                  "selected",
+                                  model[/* sidebar */2][/* icon_selected */3]
+                                ],
+                                /* [] */0
+                              ]
+                            ]),
+                        /* :: */[
+                          Tea_html.id("sidebar-icon"),
+                          /* :: */[
+                            Tea_html.onClick(/* ClickedSidebarIcon */3),
+                            /* [] */0
+                          ]
+                        ]
+                      ], /* [] */0),
+                  /* :: */[
+                    Tea_html.div(undefined, undefined, /* :: */[
+                          Tea_html.id("main-container"),
+                          /* [] */0
+                        ], view_main(model)),
+                    /* [] */0
+                  ]
+                ]
               ]
             ]);
 }
@@ -465,7 +548,8 @@ exports.get_function_list = get_function_list;
 exports.create_sidebar_link_state = create_sidebar_link_state;
 exports.init = init;
 exports.parse_hash_value = parse_hash_value;
-exports.flipSelected = flipSelected;
+exports.flipSidebarLinkSelected = flipSidebarLinkSelected;
+exports.flipSidebarIconSelected = flipSidebarIconSelected;
 exports.scrollToPosition = scrollToPosition;
 exports.setScrollPosition = setScrollPosition;
 exports.update_element_results = update_element_results;

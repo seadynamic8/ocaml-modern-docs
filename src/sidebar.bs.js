@@ -220,120 +220,152 @@ function sidebar_search_results(search_results) {
             ], sidebar_search_results_list(search_results));
 }
 
-function view_sidebar(sidebar) {
-  return Tea_html.aside(undefined, undefined, /* :: */[
-              Tea_html.class$prime("sidebar"),
-              /* [] */0
-            ], /* :: */[
-              Tea_html.a(undefined, undefined, /* :: */[
-                    Tea_html.href("#docs_home"),
+function sidebar_content(sidebar) {
+  return /* :: */[
+          Tea_html.div(undefined, undefined, /* :: */[
+                Tea_html.id("search-results"),
+                /* :: */[
+                  Tea_html.classList(/* :: */[
+                        /* tuple */[
+                          "show-results",
+                          List.length(sidebar[/* search_results */1]) > 0
+                        ],
+                        /* [] */0
+                      ]),
+                  /* [] */0
+                ]
+              ], sidebar_search_results(sidebar[/* search_results */1])),
+          /* :: */[
+            Tea_html.h3(undefined, undefined, /* :: */[
+                  Tea_html.id("modules-title"),
+                  /* [] */0
+                ], /* :: */[
+                  Tea_html.text("Modules"),
+                  /* [] */0
+                ]),
+            /* :: */[
+              Tea_html.ul(undefined, undefined, /* :: */[
+                    Tea_html.class$prime("module-links"),
                     /* [] */0
-                  ], /* :: */[
-                    Tea_html.img(undefined, undefined, /* :: */[
-                          Tea_html.src("http://ocaml.org/img/colour-logo-white.svg"),
-                          /* :: */[
-                            Tea_html.id("logo"),
-                            /* [] */0
-                          ]
-                        ], /* [] */0),
+                  ], List.map(sidebar_link, sidebar[/* sidebar_links */2])),
+              /* [] */0
+            ]
+          ]
+        ];
+}
+
+function sidebar_header(sidebar) {
+  return /* :: */[
+          Tea_html.a(undefined, undefined, /* :: */[
+                Tea_html.href("#docs_home"),
+                /* [] */0
+              ], /* :: */[
+                Tea_html.img(undefined, undefined, /* :: */[
+                      Tea_html.src("http://ocaml.org/img/colour-logo-white.svg"),
+                      /* :: */[
+                        Tea_html.id("logo"),
+                        /* [] */0
+                      ]
+                    ], /* [] */0),
+                /* [] */0
+              ]),
+          /* :: */[
+            Tea_html.h5(undefined, undefined, /* :: */[
+                  Tea_html.id("version"),
+                  /* [] */0
+                ], /* :: */[
+                  Tea_html.text("v4.07 (Unofficial)"),
+                  /* [] */0
+                ]),
+            /* :: */[
+              Tea_html.h6(undefined, undefined, /* [] */0, /* :: */[
+                    Tea_html.a(undefined, undefined, /* :: */[
+                          Tea_html.href("https://caml.inria.fr/pub/docs/manual-ocaml-4.07/"),
+                          /* [] */0
+                        ], /* :: */[
+                          Tea_html.text("Official Docs"),
+                          /* [] */0
+                        ]),
                     /* [] */0
                   ]),
               /* :: */[
-                Tea_html.h5(undefined, undefined, /* :: */[
-                      Tea_html.id("version"),
-                      /* [] */0
-                    ], /* :: */[
-                      Tea_html.text("v4.07 (Unofficial)"),
+                Tea_html.h6(undefined, undefined, /* [] */0, /* :: */[
+                      Tea_html.a(undefined, undefined, /* :: */[
+                            Tea_html.href("https://ocaml.org/"),
+                            /* [] */0
+                          ], /* :: */[
+                            Tea_html.text("Official Website"),
+                            /* [] */0
+                          ]),
                       /* [] */0
                     ]),
                 /* :: */[
-                  Tea_html.h6(undefined, undefined, /* [] */0, /* :: */[
+                  Tea_html.h6(undefined, undefined, /* :: */[
+                        Tea_html.id("back-link"),
+                        /* [] */0
+                      ], /* :: */[
                         Tea_html.a(undefined, undefined, /* :: */[
-                              Tea_html.href("https://caml.inria.fr/pub/docs/manual-ocaml-4.07/"),
+                              Tea_html.href("https://www.streamingspring.com"),
                               /* [] */0
                             ], /* :: */[
-                              Tea_html.text("Official Docs"),
+                              Tea_html.text("<- Back to Blog"),
                               /* [] */0
                             ]),
                         /* [] */0
                       ]),
                   /* :: */[
-                    Tea_html.h6(undefined, undefined, /* [] */0, /* :: */[
-                          Tea_html.a(undefined, undefined, /* :: */[
-                                Tea_html.href("https://ocaml.org/"),
-                                /* [] */0
-                              ], /* :: */[
-                                Tea_html.text("Official Website"),
-                                /* [] */0
-                              ]),
-                          /* [] */0
-                        ]),
-                    /* :: */[
-                      Tea_html.h6(undefined, undefined, /* :: */[
-                            Tea_html.id("back-link"),
-                            /* [] */0
-                          ], /* :: */[
-                            Tea_html.a(undefined, undefined, /* :: */[
-                                  Tea_html.href("https://www.streamingspring.com"),
-                                  /* [] */0
-                                ], /* :: */[
-                                  Tea_html.text("<- Back to Blog"),
-                                  /* [] */0
-                                ]),
-                            /* [] */0
-                          ]),
-                      /* :: */[
-                        Tea_html.input$prime(undefined, undefined, /* :: */[
-                              Tea_html.type$prime("text"),
+                    Tea_html.input$prime(undefined, undefined, /* :: */[
+                          Tea_html.type$prime("text"),
+                          /* :: */[
+                            Tea_html.id("search-bar"),
+                            /* :: */[
+                              Tea_html.value(sidebar[/* search_term */0]),
                               /* :: */[
-                                Tea_html.id("search-bar"),
+                                Tea_html.onInput(undefined, Types.updateSearchTerm),
                                 /* :: */[
-                                  Tea_html.value(sidebar[/* search_term */0]),
-                                  /* :: */[
-                                    Tea_html.onInput(undefined, Types.updateSearchTerm),
-                                    /* :: */[
-                                      onEnter(/* Search */1),
-                                      /* [] */0
-                                    ]
-                                  ]
+                                  onEnter(/* Search */1),
+                                  /* [] */0
                                 ]
                               ]
-                            ], /* [] */0),
-                        /* :: */[
-                          Tea_html.div(undefined, undefined, /* :: */[
-                                Tea_html.id("search-results"),
-                                /* :: */[
-                                  Tea_html.classList(/* :: */[
-                                        /* tuple */[
-                                          "show-results",
-                                          List.length(sidebar[/* search_results */1]) > 0
-                                        ],
-                                        /* [] */0
-                                      ]),
-                                  /* [] */0
-                                ]
-                              ], sidebar_search_results(sidebar[/* search_results */1])),
-                          /* :: */[
-                            Tea_html.h3(undefined, undefined, /* :: */[
-                                  Tea_html.id("modules-title"),
-                                  /* [] */0
-                                ], /* :: */[
-                                  Tea_html.text("Modules"),
-                                  /* [] */0
-                                ]),
-                            /* :: */[
-                              Tea_html.ul(undefined, undefined, /* :: */[
-                                    Tea_html.class$prime("module-links"),
-                                    /* [] */0
-                                  ], List.map(sidebar_link, sidebar[/* sidebar_links */2])),
-                              /* [] */0
                             ]
                           ]
-                        ]
-                      ]
-                    ]
+                        ], /* [] */0),
+                    /* [] */0
                   ]
                 ]
+              ]
+            ]
+          ]
+        ];
+}
+
+function view_sidebar(sidebar) {
+  return Tea_html.aside(undefined, undefined, /* :: */[
+              Tea_html.classList(/* :: */[
+                    /* tuple */[
+                      "sidebar",
+                      true
+                    ],
+                    /* :: */[
+                      /* tuple */[
+                        "selected",
+                        sidebar[/* icon_selected */3]
+                      ],
+                      /* [] */0
+                    ]
+                  ]),
+              /* [] */0
+            ], /* :: */[
+              Tea_html.div(undefined, undefined, /* :: */[
+                    Tea_html.id("sidebar-header"),
+                    /* [] */0
+                  ], sidebar_header(sidebar)),
+              /* :: */[
+                Tea_html.div(undefined, undefined, /* :: */[
+                      Tea_html.id("sidebar-content"),
+                      /* [] */0
+                    ], sidebar_content(sidebar)),
+                /* [] */0
               ]
             ]);
 }
@@ -347,5 +379,7 @@ exports.module_sidebar_links = module_sidebar_links;
 exports.sidebar_element_results = sidebar_element_results;
 exports.sidebar_search_results_list = sidebar_search_results_list;
 exports.sidebar_search_results = sidebar_search_results;
+exports.sidebar_content = sidebar_content;
+exports.sidebar_header = sidebar_header;
 exports.view_sidebar = view_sidebar;
 /* Tea_html Not a pure module */

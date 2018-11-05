@@ -24,10 +24,13 @@ var search = /* Search */1;
 
 var clear = /* Clear */2;
 
+var clickedSidebarIcon = /* ClickedSidebarIcon */3;
+
 exports.urlChange = urlChange;
 exports.clickedSidebarLink = clickedSidebarLink;
 exports.scroll = scroll;
 exports.updateSearchTerm = updateSearchTerm;
 exports.search = search;
 exports.clear = clear;
+exports.clickedSidebarIcon = clickedSidebarIcon;
 /* No side effect */
