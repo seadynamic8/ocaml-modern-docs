@@ -318,6 +318,13 @@ let extra_files =
   ; "Str.html"
   ; "Unix.html"
   ; "UnixLabels.html"
+  ; "Thread.html"
+  ; "Mutex.html"
+  ; "Condition.html"
+  ; "Event.html"
+  ; "ThreadUnix.html"
+  ; "Graphics.html"
+  ; "Dynlink.html"
   ]
 
 let standard_files =
