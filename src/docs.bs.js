@@ -557,7 +557,7 @@ function sidebar_element_results(search_results) {
               }), List.rev(Belt_MapString.toList(search_results[/* element_results */1])));
 }
 
-function sidebar_search_results(search_results) {
+function sidebar_search_results_list(search_results) {
   return List.map((function (sr) {
                 return Tea_html.ul(undefined, undefined, /* :: */[
                             Tea_html.class$prime("search-result-module-list"),
@@ -573,6 +573,37 @@ function sidebar_search_results(search_results) {
                             sidebar_element_results(sr)
                           ]);
               }), search_results);
+}
+
+function sidebar_search_results(search_results) {
+  return Pervasives.$at(/* :: */[
+              Tea_html.div(undefined, undefined, /* :: */[
+                    Tea_html.id("search-results-header"),
+                    /* [] */0
+                  ], /* :: */[
+                    Tea_html.h3(undefined, undefined, /* :: */[
+                          Tea_html.id("search-results-title"),
+                          /* [] */0
+                        ], /* :: */[
+                          Tea_html.text("Results"),
+                          /* [] */0
+                        ]),
+                    /* :: */[
+                      Tea_html.button(undefined, undefined, /* :: */[
+                            Tea_html.id("clear-button"),
+                            /* :: */[
+                              Tea_html.onClick(/* Clear */2),
+                              /* [] */0
+                            ]
+                          ], /* :: */[
+                            Tea_html.text("Clear"),
+                            /* [] */0
+                          ]),
+                      /* [] */0
+                    ]
+                  ]),
+              /* [] */0
+            ], sidebar_search_results_list(search_results));
 }
 
 function view_sidebar(sidebar) {
@@ -667,34 +698,7 @@ function view_sidebar(sidebar) {
                                       ]),
                                   /* [] */0
                                 ]
-                              ], Pervasives.$at(/* :: */[
-                                    Tea_html.div(undefined, undefined, /* :: */[
-                                          Tea_html.id("search-results-header"),
-                                          /* [] */0
-                                        ], /* :: */[
-                                          Tea_html.h3(undefined, undefined, /* :: */[
-                                                Tea_html.id("search-results-title"),
-                                                /* [] */0
-                                              ], /* :: */[
-                                                Tea_html.text("Results"),
-                                                /* [] */0
-                                              ]),
-                                          /* :: */[
-                                            Tea_html.button(undefined, undefined, /* :: */[
-                                                  Tea_html.id("clear-button"),
-                                                  /* :: */[
-                                                    Tea_html.onClick(/* Clear */2),
-                                                    /* [] */0
-                                                  ]
-                                                ], /* :: */[
-                                                  Tea_html.text("Clear"),
-                                                  /* [] */0
-                                                ]),
-                                            /* [] */0
-                                          ]
-                                        ]),
-                                    /* [] */0
-                                  ], sidebar_search_results(sidebar[/* search_results */1]))),
+                              ], sidebar_search_results(sidebar[/* search_results */1])),
                           /* :: */[
                             Tea_html.h3(undefined, undefined, /* :: */[
                                   Tea_html.id("modules-title"),
@@ -1024,6 +1028,7 @@ exports.sublist_sidebar = sublist_sidebar;
 exports.sidebar_link = sidebar_link;
 exports.module_sidebar_links = module_sidebar_links;
 exports.sidebar_element_results = sidebar_element_results;
+exports.sidebar_search_results_list = sidebar_search_results_list;
 exports.sidebar_search_results = sidebar_search_results;
 exports.view_sidebar = view_sidebar;
 exports.view_element_header = view_element_header;

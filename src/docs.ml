@@ -354,12 +354,20 @@ let sidebar_element_results search_results =
   ) (Belt.Map.String.toList search_results.element_results |> List.rev)
 
 
-let sidebar_search_results search_results =
+let sidebar_search_results_list search_results =
   List.map (fun sr ->
     ul [ class' "search-result-module-list" ]
       ( a [ href ("#" ^ sr.module_group) ] [ text sr.module_group ] ::
         sidebar_element_results sr)
   ) search_results
+
+let sidebar_search_results search_results =
+  [ div
+      [ id "search-results-header" ]
+      [ h3 [ id "search-results-title" ] [ text "Results" ]
+      ; button [ id "clear-button"; onClick Clear ] [ text "Clear" ]
+      ]
+   ] @ (sidebar_search_results_list search_results)
 
 let view_sidebar sidebar =
   aside [ class' "sidebar" ]
@@ -375,7 +383,11 @@ let view_sidebar sidebar =
             [ text "Official Docs" ]
         ]
     ; h6 [] [ a [ href "https://ocaml.org/" ] [ text "Official Website" ] ]
-    ; h6 [ id "back-link" ] [ a [ href "https://www.streamingspring.com" ] [ text "<- Back to Blog" ] ]
+    ; h6
+        [ id "back-link" ]
+        [ a [ href "https://www.streamingspring.com" ]
+            [ text "<- Back to Blog" ]
+        ]
     ; input'
         [ type' "text"
         ; id "search-bar"
@@ -385,16 +397,9 @@ let view_sidebar sidebar =
         []
     ; div
         [ id "search-results"
-        ; classList
-            [ "show-results", List.length sidebar.search_results > 0 ]
+        ; classList [ "show-results", List.length sidebar.search_results > 0 ]
         ]
-        ([ div
-            [ id "search-results-header" ]
-            [ h3 [ id "search-results-title" ] [ text "Results" ]
-            ; button [ id "clear-button"; onClick Clear ] [ text "Clear" ]
-            ]
-         ] @
-          (sidebar_search_results sidebar.search_results))
+        (sidebar_search_results sidebar.search_results)
     ; h3 [ id "modules-title" ] [ text "Modules" ]
     ; ul
         [ class' "module-links" ]
