@@ -300,7 +300,7 @@ let parse_top node module_elements =
   let module_name = node $ "h1 a" |> R.leaf_text in
   let module_info = node $ ".module.top .info-desc" in
   { module_elements with
-    module_name = module_name
+    module_name
   ; module_info = parse_html_info module_info }
 
 let parse_file file =
@@ -312,30 +312,36 @@ let parse_file file =
 
 let index_node = read_file (index_dir ^ "stdlib.html") |> parse
 
+let extra_files =
+  [ "libref/Pervasives.html"
+  ; "libref/Map.Make.html"
+  ; "libref/Str.html"
+  ; "libref/Unix.html"
+  ; "libref/UnixLabels.html"
+  ]
+
 let files =
   index_node $$ ".li-links a"
   |> to_list
   |> List.map (fun link -> R.attribute "href" link)
 
-let pervasives_file = "libref/Pervasives.html"
-
 let all_files =
-  List.sort compare (pervasives_file :: files)
+  List.sort compare (extra_files @ files)
 
 let _ =
   let ch = open_out output_filename in
 
-  all_files
-  |> List.map (fun file ->
-    try
-      parse_file (index_dir ^ file)
-    with
-      | Failure msg ->
-        print_endline ("error file: " ^ file ^ "\n error msg: " ^ msg);
-        blank_module
-  )
-  |> Parser_j.string_of_modules
-  |> Yojson.Safe.prettify
-  |> output_string ch;
+    all_files
+    |> List.map (fun file ->
+      try
+        parse_file (index_dir ^ file)
+      with
+        | Failure msg ->
+          print_endline ("error file: " ^ file ^ "\n error msg: " ^ msg);
+          blank_module
+    )
+    |> Parser_j.string_of_modules
+    |> Yojson.Safe.prettify
+    |> output_string ch;
 
-  close_out ch
+    close_out ch
