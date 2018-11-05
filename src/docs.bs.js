@@ -136,6 +136,28 @@ function parse_hash_value(hash) {
   }
 }
 
+function flipSelected(sidebar_link_name, is_functions, sidebar_link) {
+  if (sidebar_link[/* name */0] === sidebar_link_name) {
+    if (is_functions) {
+      return /* record */[
+              /* name */sidebar_link[/* name */0],
+              /* selected */sidebar_link[/* selected */1],
+              /* functions */sidebar_link[/* functions */2],
+              /* functions_selected */!sidebar_link[/* functions_selected */3]
+            ];
+    } else {
+      return /* record */[
+              /* name */sidebar_link[/* name */0],
+              /* selected */!sidebar_link[/* selected */1],
+              /* functions */sidebar_link[/* functions */2],
+              /* functions_selected */sidebar_link[/* functions_selected */3]
+            ];
+    }
+  } else {
+    return sidebar_link;
+  }
+}
+
 function scrollToPosition(position) {
   var element = document.querySelector("#" + position);
   if (element !== null) {
@@ -343,27 +365,9 @@ function update(model, msg) {
       case 1 : 
           var is_functions = msg[1];
           var sidebar_link_name = msg[0];
-          var flipSelected = function (s) {
-            if (s[/* name */0] === sidebar_link_name) {
-              if (is_functions) {
-                return /* record */[
-                        /* name */s[/* name */0],
-                        /* selected */s[/* selected */1],
-                        /* functions */s[/* functions */2],
-                        /* functions_selected */!s[/* functions_selected */3]
-                      ];
-              } else {
-                return /* record */[
-                        /* name */s[/* name */0],
-                        /* selected */!s[/* selected */1],
-                        /* functions */s[/* functions */2],
-                        /* functions_selected */s[/* functions_selected */3]
-                      ];
-              }
-            } else {
-              return s;
-            }
-          };
+          var sidebar_links = List.map((function (param) {
+                  return flipSelected(sidebar_link_name, is_functions, param);
+                }), model[/* sidebar */2][/* sidebar_links */2]);
           var init$2 = model[/* sidebar */2];
           return /* tuple */[
                   /* record */[
@@ -372,7 +376,7 @@ function update(model, msg) {
                     /* sidebar : record */[
                       /* search_term */init$2[/* search_term */0],
                       /* search_results */init$2[/* search_results */1],
-                      /* sidebar_links */List.map(flipSelected, model[/* sidebar */2][/* sidebar_links */2])
+                      /* sidebar_links */sidebar_links
                     ],
                     /* page */model[/* page */3]
                   ],
@@ -1003,6 +1007,7 @@ exports.get_function_list = get_function_list;
 exports.create_sidebar_link_state = create_sidebar_link_state;
 exports.init = init;
 exports.parse_hash_value = parse_hash_value;
+exports.flipSelected = flipSelected;
 exports.scrollToPosition = scrollToPosition;
 exports.setScrollPosition = setScrollPosition;
 exports.update_element_results = update_element_results;

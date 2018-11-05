@@ -135,6 +135,17 @@ let parse_hash_value hash =
     { name = Js.String.substr ~from: 1 name; position = "" }
   | _ -> { name = ""; position = "" }
 
+let flipSelected sidebar_link_name is_functions sidebar_link =
+  if sidebar_link.name = sidebar_link_name then
+    begin match is_functions with
+    | true ->
+      { sidebar_link with functions_selected = not sidebar_link.functions_selected }
+    | false ->
+      { sidebar_link with selected = not sidebar_link.selected }
+    end
+  else
+    sidebar_link
+
 let scrollToPosition position =
   let element = document |. querySelector("#" ^ position) in
     if element <> Js.Nullable.null then
@@ -233,22 +244,10 @@ let update model msg =
       Task.perform (fun _ -> Scroll) (Task.succeed ())
 
   | ClickedSidebarLink (sidebar_link_name, is_functions) ->
-      let
-        flipSelected s =
-          if s.name = sidebar_link_name then
-            begin match is_functions with
-            | true ->
-              { s with functions_selected = not s.functions_selected }
-            | false ->
-              { s with selected = not s.selected }
-            end
-          else
-            s
+      let sidebar_links =
+        List.map (flipSelected sidebar_link_name is_functions) model.sidebar.sidebar_links
       in
-      { model with
-        sidebar =
-          { model.sidebar with
-            sidebar_links = List.map flipSelected model.sidebar.sidebar_links }
+      { model with sidebar = { model.sidebar with sidebar_links }
       }, Cmd.none
 
   | Scroll ->
