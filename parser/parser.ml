@@ -42,17 +42,12 @@ type 'a section_type
   = Section of 'a Soup.node
   | End *)
 
+
 let blank_section =
   { section_name = None
   ; section_info = None
   ; elements     = []
   ; sub_sections = []
-  }
-
-let blank_module =
-  { module_name = ""
-  ; module_info = ""
-  ; sections    = []
   }
 
 let opt_default default option =
@@ -82,17 +77,33 @@ let node_class node =
 let rec parse_info_exception next_node info =
   match name next_node with
   | "p" | "ul" ->
-    let next_next_node = next_node |> next_element in
+      let next_next_node = next_node |> next_element in
 
-    begin match next_next_node with
-    | Some next_next_node ->
-      parse_info_exception next_next_node (info ^ (to_string next_node))
-    | None ->
-      (Some info, None, Some next_node)
-    end
+      begin match next_next_node with
+      | Some next_next_node ->
+          parse_info_exception next_next_node (info ^ (to_string next_node))
+      | None ->
+          (Some info, None, Some next_node)
+      end
   | _ ->
-    (Some info, None, Some next_node)
+      (Some info, None, Some next_node)
 
+(* Since there is no really grouping of nodes, we need to see what follows
+  the primary "pre" node.
+  There are a few variations that we need to see if they belong to the same
+  node:
+
+  - info is next node
+    - param_info is next next node  (param_info gets appended onto info)
+    - no next next node
+  - typetable section only
+    - info is next next node
+    - no next next node
+  - p / ul is next node (exception)
+  - No extra nodes
+
+  * No extra nodes -> meaning either the end or new section
+*)
 let parse_next_nodes node =
   match node |> next_element with
   | Some next_node ->
@@ -155,24 +166,24 @@ let parse_element node =
   let parsed_element =
     match trimmed_texts node with
     | "type" :: name :: _sep :: type_type :: _tl ->
-      Type (name, type_type, div_info)
+        Type (name, type_type, div_info)
     | "type" :: name :: _tl ->
-      Typevariant (name, type_table, div_info)
+        Typevariant (name, type_table, div_info)
     | "val" :: name :: _sep :: tl ->
-      let annotation = String.concat " " tl in
-      Function (name, annotation, div_info)
+        let annotation = String.concat " " tl in
+        Function (name, annotation, div_info)
     | "exception" :: name :: _sep :: parameter :: _tl ->
-      Exception (name, Some parameter, div_info)
+        Exception (name, Some parameter, div_info)
     | "exception" :: name :: _tl ->
-      Exception (name, None, div_info)
+        Exception (name, None, div_info)
     | "module" :: name :: _tl ->
-      Module (name, div_info)
+        Module (name, div_info)
     | "module type" :: name :: _tl ->
-      Moduletype (name, div_info)
+        Moduletype (name, div_info)
     | _ ->
-      let _ = print_endline ("prev node: " ^ (node |> R.previous_element |> name)) in
-      raise (Failure ("Can't parse element: " ^ (node |> name) ^
-        "\n trimmed_texts: " ^ (node |> trimmed_texts |> String.concat "") ))
+        let _ = print_endline ("prev node: " ^ (node |> R.previous_element |> name)) in
+        raise (Failure ("Can't parse element: " ^ (node |> name) ^
+          "\n trimmed_texts: " ^ (node |> trimmed_texts |> String.concat "") ))
   in
     (next_element, parsed_element)
 
@@ -184,131 +195,149 @@ let is_sect_exception node =
 let is_section_element node =
   match node with
   | Some node ->
+      let section =
+        begin match name node with
+        | "h2" | "h4" | "h7" ->
+            MainSection
+        | "p" when is_sect_exception node ->
+            MainSection
+        | "h3" ->
+            SubSection
+        | "div" when node_class node = "h8" ->
+            SubSection
+        | "p" | "ul" | "pre" ->
+            Element
+        | _ ->
+            End
+        end
+      in
+        (section, node)
 
-    let section =
-      begin match name node with
-      | "h2" | "h4" | "h7" ->
-          MainSection
-      | "p" when is_sect_exception node ->
-          MainSection
-      | "h3" ->
-          SubSection
-      | "div" when node_class node = "h8" ->
-          SubSection
-      | "p" | "ul" | "pre" ->
-          Element
-      | _ ->
-          End
-      end
-    in
-      (section, node)
   | None ->
-    (End, create_element "empty")
+      (End, create_element "empty")
 
-let parse_section_header node section =
+let parse_section_header (node, section) =
   match name node with
   | "h2" | "h3" | "h4" | "h7" | "div" ->
-    (node |> next_element,
-    { section with section_name = Some (node |> R.leaf_text) })
-  | _ ->
-    (Some node, section)
+      (node |> next_element,
+      { section with section_name = Some (node |> R.leaf_text) })
 
-let rec parse_section_info node section =
+  | _ ->
+      (Some node, section)
+
+let rec parse_section_info (node, section) =
   match node with
   | Some node ->
-
     begin match name node with
     | "p" | "ul" ->
-      parse_section_info
-        (node |> next_element)
-        { section with
-          section_info =
-            Some ((opt_default "" section.section_info) ^ (to_string node)) }
+        parse_section_info
+          (node |> next_element,
+          { section with
+            section_info =
+              Some ((opt_default "" section.section_info) ^ (to_string node)) })
+
     | _ ->
-      (Some node, section)
+        (Some node, section)
     end
+
   | None ->
     (None, section)
 
-let process_section_top node section =
-  let (next_node, section) = parse_section_header node section in
-  parse_section_info next_node section
+let process_section_top (node, section) =
+  (node, section)
+  |> parse_section_header
+  |> parse_section_info
 
-let rec process_section_elements node section in_sub_section =
+(* in_sub_section flag is used for only one level deep *)
+let rec process_section_elements in_sub_section (node, section) =
   match is_section_element node with
   | End, _ ->
-    (None,
-    { section with
-      elements     = List.rev section.elements
-    ; sub_sections = List.rev section.sub_sections })
+      (None,
+      { section with
+        elements     = List.rev section.elements
+      ; sub_sections = List.rev section.sub_sections })
 
   | MainSection, node ->
-    (Some node,
-    { section with
-      elements     = List.rev section.elements
-    ; sub_sections = List.rev section.sub_sections })
-
-  | SubSection, node ->
-    if in_sub_section = true then
       (Some node,
       { section with
         elements     = List.rev section.elements
       ; sub_sections = List.rev section.sub_sections })
-    else
-      let (next_node, sub_section) = process_section_top node blank_section in
-      let (next_element, sub_section) = process_section_elements next_node sub_section true in
 
-      process_section_elements
-        next_element
-        ({ section with sub_sections = sub_section :: section.sub_sections }) false
+  | SubSection, node ->
+      if in_sub_section = true then
+        (Some node,
+        { section with
+          elements     = List.rev section.elements
+        ; sub_sections = List.rev section.sub_sections })
+      else
+        let (next_element, sub_section) =
+          (node, blank_section)
+          |> process_section_top
+          |> process_section_elements true
+        in
+
+        process_section_elements
+          false
+          (next_element,
+          { section with sub_sections = sub_section :: section.sub_sections })
 
   | Element, node ->
-    let (next_element, element) = parse_element node in
-    process_section_elements
-      next_element
-      ({ section with elements = element :: section.elements }) in_sub_section
+      let (next_element, element) = parse_element node in
+      process_section_elements
+        in_sub_section
+        (next_element,
+        { section with elements = element :: section.elements })
 
-let process_section node section =
-  let (next_node, section) = process_section_top node section in
-  process_section_elements next_node section false
+let process_section (node, section) =
+  (node, section)
+  |> process_section_top
+  |> process_section_elements false
 
 let is_new_section node =
   match node with
   | Some node ->
-    begin match name node with
-    | "h2" | "h3" | "h4" | "h7" | "p" | "ul" | "pre" -> Some node
-    | _ -> None
-    end
+      begin match name node with
+      | "h2" | "h3" | "h4" | "h7" | "p" | "ul" | "pre" -> Some node
+      | _ -> None
+      end
   | None -> None
 
-let rec find_next_section node module_elements =
+(* Sections are either the default one with no heading or has a heading *)
+let rec process_sections (node, m) =
   match is_new_section node with
   | None ->
-    { module_elements with sections = List.rev module_elements.sections }
+      { m with sections = List.rev m.sections }
 
   | Some node ->
-    let (next_section_node, new_section) = process_section node blank_section in
-    find_next_section
-      next_section_node
-      { module_elements with sections = new_section :: module_elements.sections }
+      let (next_section_node, new_section) = process_section (node, blank_section) in
+      process_sections
+        (next_section_node, { m with sections = new_section :: m.sections })
 
-let process_after_top node module_elements =
+let process_after_top (node, m) =
   let node = node $ "hr" |> next_element in
-  find_next_section node module_elements
+    process_sections (node, m)
 
-let parse_top node module_elements =
+let parse_top (node, m) =
   let module_name = node $ "h1 a" |> R.leaf_text in
   let module_info = node $ ".module.top .info-desc" in
-  { module_elements with
-    module_name
-  ; module_info = parse_html_info module_info }
+    (node,
+    { m with
+      module_name;
+      module_info = parse_html_info module_info })
+
+let blank_module =
+  { module_name = ""
+  ; module_info = ""
+  ; sections    = []
+  }
 
 let parse_file file =
   let top_node = read_file file |> parse in
-  let module_elements = parse_top top_node blank_module in
-  process_after_top top_node module_elements
 
-(* let top_node = read_file (ref_dir ^ "Printf.html") |> parse *)
+  (top_node, blank_module)
+  |> parse_top
+  |> process_after_top
+
 
 let index_node = read_file (index_dir ^ "stdlib.html") |> parse
 
@@ -333,26 +362,24 @@ let standard_files =
   |> List.map (fun link -> R.attribute "href" link)
 
 let all_sorted_files =
-  let all_files =
-    extra_files
-    |> List.fold_left (fun standard_files file ->
+  extra_files
+  |> List.fold_left (fun standard_files file ->
       (ref_dir ^ file) :: standard_files
     ) standard_files
-  in
-  List.sort compare (all_files)
+  |> List.sort compare
 
 let _ =
   let ch = open_out output_filename in
 
     all_sorted_files
     |> List.map (fun file ->
-      try
-        parse_file (index_dir ^ file)
-      with
-        | Failure msg ->
-          print_endline ("error file: " ^ file ^ "\n error msg: " ^ msg);
-          blank_module
-    )
+        try
+          parse_file (index_dir ^ file)
+        with
+          | Failure msg ->
+            print_endline ("error file: " ^ file ^ "\n error msg: " ^ msg);
+            blank_module
+      )
     |> Parser_j.string_of_modules
     |> Yojson.Safe.prettify
     |> output_string ch;
