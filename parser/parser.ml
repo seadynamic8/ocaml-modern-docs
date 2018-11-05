@@ -62,7 +62,7 @@ let opt_default default option =
 
 let index_dir = "./htmlman/"
 
-let ref_dir = index_dir ^ "libref/"
+let ref_dir = "libref/"
 
 let output_filename = "modules.json"
 
@@ -313,25 +313,31 @@ let parse_file file =
 let index_node = read_file (index_dir ^ "stdlib.html") |> parse
 
 let extra_files =
-  [ "libref/Pervasives.html"
-  ; "libref/Map.Make.html"
-  ; "libref/Str.html"
-  ; "libref/Unix.html"
-  ; "libref/UnixLabels.html"
+  [ "Pervasives.html"
+  ; "Map.Make.html"
+  ; "Str.html"
+  ; "Unix.html"
+  ; "UnixLabels.html"
   ]
 
-let files =
+let standard_files =
   index_node $$ ".li-links a"
   |> to_list
   |> List.map (fun link -> R.attribute "href" link)
 
-let all_files =
-  List.sort compare (extra_files @ files)
+let all_sorted_files =
+  let all_files =
+    extra_files
+    |> List.fold_left (fun standard_files file ->
+      (ref_dir ^ file) :: standard_files
+    ) standard_files
+  in
+  List.sort compare (all_files)
 
 let _ =
   let ch = open_out output_filename in
 
-    all_files
+    all_sorted_files
     |> List.map (fun file ->
       try
         parse_file (index_dir ^ file)
