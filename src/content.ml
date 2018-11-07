@@ -35,38 +35,38 @@ let parse_type_extra type_extra =
   | Some extra -> extra
   | None -> ""
 
-let view_element element =
+let view_element element_html element =
   match element with
   | Type (name, type_type, info) ->
-      []
+      element_html
       |> view_element_info info
       |> view_element_header name "type " (" = " ^ type_type)
   | Typevariant (name, type_extra, type_table, info) ->
-      []
+      element_html
       |> view_element_info info
       |> view_element_type_table type_table
       |> view_element_header name "type " (parse_type_extra type_extra)
   | Function (name, func_annotation, info) ->
-      []
+      element_html
       |> view_element_info info
       |> view_element_header name "val " (" : " ^ func_annotation)
   | Exception (name, exec_parameter, info) ->
-      []
+      element_html
       |> view_element_info info
       |> view_element_header name "exception " (parse_exception exec_parameter)
   | Module (name, info) ->
-      []
+      element_html
       |> view_element_info info
       |> view_element_header name "module " (": sig .. end")
   | Moduletype (name, info) ->
-      []
+      element_html
       |> view_element_info info
       |> view_element_header name "module type " (": sig .. end")
   | Include name ->
       view_element_header name "include " "" []
 
 let view_elements elements =
-  List.map (fun e -> li [ class' "element" ] (view_element e)) elements
+  List.map (fun e -> li [ class' "element" ] (view_element [] e)) elements
 
 (* Sections *)
 

@@ -81,20 +81,20 @@ function parse_type_extra(type_extra) {
   }
 }
 
-function view_element(element) {
+function view_element(element_html, element) {
   switch (element.tag | 0) {
     case 0 : 
-        return view_element_header(element[0], "type ", " = " + element[1], view_element_info(element[2], /* [] */0));
+        return view_element_header(element[0], "type ", " = " + element[1], view_element_info(element[2], element_html));
     case 1 : 
-        return view_element_header(element[0], "type ", parse_type_extra(element[1]), view_element_type_table(element[2], view_element_info(element[3], /* [] */0)));
+        return view_element_header(element[0], "type ", parse_type_extra(element[1]), view_element_type_table(element[2], view_element_info(element[3], element_html)));
     case 2 : 
-        return view_element_header(element[0], "val ", " : " + element[1], view_element_info(element[2], /* [] */0));
+        return view_element_header(element[0], "val ", " : " + element[1], view_element_info(element[2], element_html));
     case 3 : 
-        return view_element_header(element[0], "exception ", parse_exception(element[1]), view_element_info(element[2], /* [] */0));
+        return view_element_header(element[0], "exception ", parse_exception(element[1]), view_element_info(element[2], element_html));
     case 4 : 
-        return view_element_header(element[0], "module ", ": sig .. end", view_element_info(element[1], /* [] */0));
+        return view_element_header(element[0], "module ", ": sig .. end", view_element_info(element[1], element_html));
     case 5 : 
-        return view_element_header(element[0], "module type ", ": sig .. end", view_element_info(element[1], /* [] */0));
+        return view_element_header(element[0], "module type ", ": sig .. end", view_element_info(element[1], element_html));
     case 6 : 
         return view_element_header(element[0], "include ", "", /* [] */0);
     
@@ -106,7 +106,7 @@ function view_elements(elements) {
                 return Tea_html.li(undefined, undefined, /* :: */[
                             Tea_html.class$prime("element"),
                             /* [] */0
-                          ], view_element(e));
+                          ], view_element(/* [] */0, e));
               }), elements);
 }
 
