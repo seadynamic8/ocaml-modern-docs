@@ -4,6 +4,7 @@
 var List = require("bs-platform/lib/js/list.js");
 var Vdom = require("bucklescript-tea/src-ocaml/vdom.js");
 var Tea_html = require("bucklescript-tea/src-ocaml/tea_html.js");
+var Pervasives = require("bs-platform/lib/js/pervasives.js");
 
 function innerHTML(html) {
   return Vdom.prop("innerHTML", html);
@@ -164,6 +165,67 @@ function view_sections(module_item) {
   return List.map(view_section, module_item[/* sections */2]);
 }
 
+function view_functor_table(functor_info, top_html) {
+  if (functor_info[/* table */3].length !== 0) {
+    return Pervasives.$at(top_html, /* :: */[
+                Tea_html.table(undefined, undefined, /* :: */[
+                      Vdom.prop("innerHTML", functor_info[/* table */3]),
+                      /* [] */0
+                    ], /* [] */0),
+                /* [] */0
+              ]);
+  } else {
+    return top_html;
+  }
+}
+
+function view_module_info(module_info, top_html) {
+  if (module_info.length !== 0) {
+    return Pervasives.$at(top_html, /* :: */[
+                Tea_html.div(undefined, undefined, /* :: */[
+                      Tea_html.class$prime("info"),
+                      /* :: */[
+                        Vdom.prop("innerHTML", module_info),
+                        /* [] */0
+                      ]
+                    ], /* [] */0),
+                /* [] */0
+              ]);
+  } else {
+    return top_html;
+  }
+}
+
+function view_functor_sig(functor_info, top_html) {
+  return Pervasives.$at(/* :: */[
+              Tea_html.div(undefined, undefined, /* :: */[
+                    Vdom.prop("innerHTML", functor_info[/* begin_sig */0]),
+                    /* [] */0
+                  ], /* [] */0),
+              /* :: */[
+                Tea_html.ul(undefined, undefined, /* [] */0, view_elements(functor_info[/* functor_elements */1])),
+                /* :: */[
+                  Tea_html.div(undefined, undefined, /* :: */[
+                        Vdom.prop("innerHTML", functor_info[/* end_sig */2]),
+                        /* [] */0
+                      ], /* [] */0),
+                  /* [] */0
+                ]
+              ]
+            ], top_html);
+}
+
+function view_module_top(module_item) {
+  var module_info = module_item[/* module_info */1];
+  var match = module_item[/* functor_info */5];
+  if (match !== undefined) {
+    var functor_info = match;
+    return view_functor_table(functor_info, view_module_info(module_info, view_functor_sig(functor_info, /* [] */0)));
+  } else {
+    return view_module_info(module_info, /* [] */0);
+  }
+}
+
 function parse_module_name(module_item) {
   var match = module_item[/* functor_info */5];
   var is_functor = match !== undefined;
@@ -191,12 +253,9 @@ function view_content(module_item) {
                     ]),
                 /* :: */[
                   Tea_html.div(undefined, undefined, /* :: */[
-                        Tea_html.class$prime("info"),
-                        /* :: */[
-                          Vdom.prop("innerHTML", module_item[/* module_info */1]),
-                          /* [] */0
-                        ]
-                      ], /* [] */0),
+                        Tea_html.class$prime("module_top"),
+                        /* [] */0
+                      ], view_module_top(module_item)),
                   /* :: */[
                     Tea_html.hr(undefined, undefined, /* [] */0, /* [] */0),
                     /* :: */[
@@ -228,6 +287,10 @@ exports.view_section_name = view_section_name;
 exports.view_section_info = view_section_info;
 exports.view_section = view_section;
 exports.view_sections = view_sections;
+exports.view_functor_table = view_functor_table;
+exports.view_module_info = view_module_info;
+exports.view_functor_sig = view_functor_sig;
+exports.view_module_top = view_module_top;
 exports.parse_module_name = parse_module_name;
 exports.view_content = view_content;
 /* Tea_html Not a pure module */

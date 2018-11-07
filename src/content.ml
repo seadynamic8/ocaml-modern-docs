@@ -95,6 +95,34 @@ let rec view_section section =
 let view_sections module_item =
   List.map (fun s -> view_section s) module_item.sections
 
+let view_functor_table functor_info top_html =
+  if String.length functor_info.table > 0 then
+    top_html @ [ table [ innerHTML functor_info.table ] [] ]
+  else
+    top_html
+
+let view_module_info module_info top_html =
+  if String.length module_info > 0 then
+    top_html @ [ div [ class' "info"; innerHTML module_info ] [] ]
+  else
+    top_html
+
+let view_functor_sig functor_info top_html =
+  [ div [ innerHTML functor_info.begin_sig ] []
+  ; ul [] (view_elements functor_info.functor_elements)
+  ; div [ innerHTML functor_info.end_sig ] []
+  ] @ top_html
+
+let view_module_top module_item =
+  let module_info = module_item.module_info in
+  match module_item.functor_info with
+  | Some functor_info ->
+    []
+    |> view_functor_sig functor_info
+    |> view_module_info module_info
+    |> view_functor_table functor_info
+  | None ->
+    view_module_info module_info []
 
 let parse_module_name module_item =
   let is_functor =
@@ -117,7 +145,7 @@ let view_content module_item =
   [ main
       [ id "module-content"; class' "content" ]
       [ h1 [ class' "title" ] [ text (parse_module_name module_item) ]
-      ; div [ class' "info"; innerHTML module_item.module_info ] []
+      ; div [ class' "module_top" ] (view_module_top module_item)
       ; hr [] []
       ; section
         [ id "elements" ]
