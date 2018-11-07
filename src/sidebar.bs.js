@@ -110,27 +110,88 @@ function sublist_sidebar(sidebar_link) {
             ]);
 }
 
-function sidebar_link(sidebar_link$1) {
+function view_sidebar_link(sidebar_link) {
   return Tea_html.li(undefined, undefined, /* [] */0, /* :: */[
               Tea_html.a(undefined, undefined, /* :: */[
                     Tea_html.onClick(/* ClickedSidebarLink */Block.__(1, [
-                            sidebar_link$1[/* name */0],
+                            sidebar_link[/* name */0],
                             false
                           ])),
                     /* [] */0
                   ], /* :: */[
-                    Tea_html.text(sidebar_link$1[/* name */0]),
+                    Tea_html.text(sidebar_link[/* name */0]),
                     /* [] */0
                   ]),
               /* :: */[
-                sublist_sidebar(sidebar_link$1),
+                sublist_sidebar(sidebar_link),
                 /* [] */0
               ]
             ]);
 }
 
-function module_sidebar_links(sidebar_links) {
-  return List.map(sidebar_link, sidebar_links);
+function module_sidebar_links(sidebar) {
+  if (sidebar[/* switch_selected */4]) {
+    return List.map(view_sidebar_link, sidebar[/* sidebar_links */2]);
+  } else {
+    return List.map(view_sidebar_link, List.filter((function (s) {
+                        return s[/* is_standard */4];
+                      }))(sidebar[/* sidebar_links */2]));
+  }
+}
+
+function module_links_header() {
+  return Tea_html.div(undefined, undefined, /* :: */[
+              Tea_html.class$prime("module-links-header"),
+              /* [] */0
+            ], /* :: */[
+              Tea_html.h3(undefined, undefined, /* :: */[
+                    Tea_html.id("modules-title"),
+                    /* [] */0
+                  ], /* :: */[
+                    Tea_html.text("Modules"),
+                    /* [] */0
+                  ]),
+              /* :: */[
+                Tea_html.div(undefined, undefined, /* :: */[
+                      Tea_html.class$prime("switch"),
+                      /* [] */0
+                    ], /* :: */[
+                      Tea_html.label(undefined, undefined, /* [] */0, /* :: */[
+                            Tea_html.text("Standard"),
+                            /* [] */0
+                          ]),
+                      /* :: */[
+                        Tea_html.label(undefined, undefined, /* :: */[
+                              Tea_html.class$prime("switch-selector"),
+                              /* [] */0
+                            ], /* :: */[
+                              Tea_html.input$prime(undefined, undefined, /* :: */[
+                                    Tea_html.type$prime("checkbox"),
+                                    /* :: */[
+                                      Tea_html.onClick(/* ToggleModuleSwitch */4),
+                                      /* [] */0
+                                    ]
+                                  ], /* [] */0),
+                              /* :: */[
+                                Tea_html.span(undefined, undefined, /* :: */[
+                                      Tea_html.class$prime("slider round"),
+                                      /* [] */0
+                                    ], /* [] */0),
+                                /* [] */0
+                              ]
+                            ]),
+                        /* :: */[
+                          Tea_html.label(undefined, undefined, /* [] */0, /* :: */[
+                                Tea_html.text("All"),
+                                /* [] */0
+                              ]),
+                          /* [] */0
+                        ]
+                      ]
+                    ]),
+                /* [] */0
+              ]
+            ]);
 }
 
 function sidebar_element_results(search_results) {
@@ -236,18 +297,12 @@ function sidebar_content(sidebar) {
                 ]
               ], sidebar_search_results(sidebar[/* search_results */1])),
           /* :: */[
-            Tea_html.h3(undefined, undefined, /* :: */[
-                  Tea_html.id("modules-title"),
-                  /* [] */0
-                ], /* :: */[
-                  Tea_html.text("Modules"),
-                  /* [] */0
-                ]),
+            module_links_header(sidebar),
             /* :: */[
               Tea_html.ul(undefined, undefined, /* :: */[
                     Tea_html.class$prime("module-links"),
                     /* [] */0
-                  ], List.map(sidebar_link, sidebar[/* sidebar_links */2])),
+                  ], module_sidebar_links(sidebar)),
               /* [] */0
             ]
           ]
@@ -374,8 +429,9 @@ exports.onEnter = onEnter;
 exports.function_links = function_links;
 exports.sidebar_functions = sidebar_functions;
 exports.sublist_sidebar = sublist_sidebar;
-exports.sidebar_link = sidebar_link;
+exports.view_sidebar_link = view_sidebar_link;
 exports.module_sidebar_links = module_sidebar_links;
+exports.module_links_header = module_links_header;
 exports.sidebar_element_results = sidebar_element_results;
 exports.sidebar_search_results_list = sidebar_search_results_list;
 exports.sidebar_search_results = sidebar_search_results;

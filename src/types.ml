@@ -23,35 +23,38 @@ type msg
   | Search
   | Clear
   | ClickedSidebarIcon
+  | ToggleModuleSwitch
   [@@bs.deriving accessors]
 
 type page =
-  { name : module_name
+  { name     : module_name
   ; position : page_location
   }
 
 type search_result =
-  { module_group : module_name
+  { module_group    : module_name
   ; element_results : element_name list Belt.Map.String.t
   }
 
 type sidebar_link =
-  { name : module_name
-  ; selected : bool
-  ; functions : function_name list
+  { name               : module_name
+  ; selected           : bool
+  ; functions          : function_name list
   ; functions_selected : bool
+  ; is_standard        : bool
   }
 
 type sidebar =
-  { search_term : search_term
-  ; search_results : search_result list
-  ; sidebar_links : sidebar_link list
-  ; icon_selected : bool
+  { search_term     : search_term
+  ; search_results  : search_result list
+  ; sidebar_links   : sidebar_link list
+  ; icon_selected   : bool
+  ; switch_selected : bool
   }
 
 type model =
-  { history : Web.Location.location list
+  { history     : Web.Location.location list
   ; module_list : Decoder.modules
-  ; sidebar : sidebar
-  ; page : page
+  ; sidebar     : sidebar
+  ; page        : page
   }

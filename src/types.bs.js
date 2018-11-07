@@ -26,6 +26,8 @@ var clear = /* Clear */2;
 
 var clickedSidebarIcon = /* ClickedSidebarIcon */3;
 
+var toggleModuleSwitch = /* ToggleModuleSwitch */4;
+
 exports.urlChange = urlChange;
 exports.clickedSidebarLink = clickedSidebarLink;
 exports.scroll = scroll;
@@ -33,4 +35,5 @@ exports.updateSearchTerm = updateSearchTerm;
 exports.search = search;
 exports.clear = clear;
 exports.clickedSidebarIcon = clickedSidebarIcon;
+exports.toggleModuleSwitch = toggleModuleSwitch;
 /* No side effect */

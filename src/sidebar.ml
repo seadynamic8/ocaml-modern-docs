@@ -51,7 +51,7 @@ let sublist_sidebar sidebar_link =
       (li [] [ a [ href ("#" ^ sidebar_link.name) ] [ text "Top" ] ]
         :: add_sidebar_functions [])
 
-let sidebar_link sidebar_link =
+let view_sidebar_link sidebar_link =
   li
     []
     [ a
@@ -61,8 +61,33 @@ let sidebar_link sidebar_link =
     ; sublist_sidebar sidebar_link
     ]
 
-let module_sidebar_links sidebar_links =
-  List.map (fun s -> sidebar_link s) sidebar_links
+let module_sidebar_links sidebar =
+  if sidebar.switch_selected then
+    List.map (fun s -> view_sidebar_link s) sidebar.sidebar_links
+  else
+    sidebar.sidebar_links
+    |> List.filter (fun s -> s.is_standard)
+    |> List.map (fun s -> view_sidebar_link s)
+
+let module_links_header sidebar =
+  div
+    [ class' "module-links-header" ]
+    [ h3 [ id "modules-title" ] [ text "Modules" ]
+    ; div
+        [ class' "switch" ]
+        [ label [] [ text "Standard" ]
+        ; label
+            [ class' "switch-selector" ]
+            [ input'
+                [ type' "checkbox"
+                ; onClick ToggleModuleSwitch
+                ]
+                []
+            ; span [ class' "slider round" ] []
+            ]
+        ; label [] [ text "All" ]
+        ]
+    ]
 
 let sidebar_element_results search_results =
   List.map (fun (category, elements) ->
@@ -104,10 +129,10 @@ let sidebar_content sidebar =
       ; classList [ "show-results", List.length sidebar.search_results > 0 ]
       ]
       (sidebar_search_results sidebar.search_results)
-  ; h3 [ id "modules-title" ] [ text "Modules" ]
+  ; module_links_header sidebar
   ; ul
       [ class' "module-links" ]
-      (module_sidebar_links sidebar.sidebar_links)
+      (module_sidebar_links sidebar)
   ]
 
 let sidebar_header sidebar =

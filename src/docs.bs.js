@@ -60,7 +60,8 @@ function create_sidebar_link_state(module_list) {
                         /* name */m[/* module_name */0],
                         /* selected */false,
                         /* functions */get_function_list(m[/* sections */2]),
-                        /* functions_selected */false
+                        /* functions_selected */false,
+                        /* is_standard */m[/* is_standard */3]
                       ];
               }), module_list);
 }
@@ -77,7 +78,8 @@ function init(_, $$location) {
               /* search_term */"",
               /* search_results : [] */0,
               /* sidebar_links */create_sidebar_link_state(get_module_list),
-              /* icon_selected */false
+              /* icon_selected */false,
+              /* switch_selected */false
             ],
             /* page : record */[
               /* name */"docs_home",
@@ -128,14 +130,16 @@ function flipSidebarLinkSelected(sidebar_link_name, is_functions, sidebar_link) 
               /* name */sidebar_link[/* name */0],
               /* selected */sidebar_link[/* selected */1],
               /* functions */sidebar_link[/* functions */2],
-              /* functions_selected */!sidebar_link[/* functions_selected */3]
+              /* functions_selected */!sidebar_link[/* functions_selected */3],
+              /* is_standard */sidebar_link[/* is_standard */4]
             ];
     } else {
       return /* record */[
               /* name */sidebar_link[/* name */0],
               /* selected */!sidebar_link[/* selected */1],
               /* functions */sidebar_link[/* functions */2],
-              /* functions_selected */sidebar_link[/* functions_selected */3]
+              /* functions_selected */sidebar_link[/* functions_selected */3],
+              /* is_standard */sidebar_link[/* is_standard */4]
             ];
     }
   } else {
@@ -149,7 +153,8 @@ function flipSidebarIconSelected(condition, sidebar) {
             /* search_term */sidebar[/* search_term */0],
             /* search_results */sidebar[/* search_results */1],
             /* sidebar_links */sidebar[/* sidebar_links */2],
-            /* icon_selected */!sidebar[/* icon_selected */3]
+            /* icon_selected */!sidebar[/* icon_selected */3],
+            /* switch_selected */sidebar[/* switch_selected */4]
           ];
   } else {
     return sidebar;
@@ -305,7 +310,8 @@ function update(model, msg) {
                         /* search_term */init[/* search_term */0],
                         /* search_results */search_results,
                         /* sidebar_links */init[/* sidebar_links */2],
-                        /* icon_selected */init[/* icon_selected */3]
+                        /* icon_selected */init[/* icon_selected */3],
+                        /* switch_selected */init[/* switch_selected */4]
                       ],
                       /* page */model[/* page */3]
                     ],
@@ -327,7 +333,8 @@ function update(model, msg) {
                       /* search_term */"",
                       /* search_results : [] */0,
                       /* sidebar_links */init$1[/* sidebar_links */2],
-                      /* icon_selected */init$1[/* icon_selected */3]
+                      /* icon_selected */init$1[/* icon_selected */3],
+                      /* switch_selected */init$1[/* switch_selected */4]
                     ],
                     /* page */model[/* page */3]
                   ],
@@ -343,7 +350,25 @@ function update(model, msg) {
                       /* search_term */init$2[/* search_term */0],
                       /* search_results */init$2[/* search_results */1],
                       /* sidebar_links */init$2[/* sidebar_links */2],
-                      /* icon_selected */!model[/* sidebar */2][/* icon_selected */3]
+                      /* icon_selected */!model[/* sidebar */2][/* icon_selected */3],
+                      /* switch_selected */init$2[/* switch_selected */4]
+                    ],
+                    /* page */model[/* page */3]
+                  ],
+                  Tea_cmd.none
+                ];
+      case 4 : 
+          var init$3 = model[/* sidebar */2];
+          return /* tuple */[
+                  /* record */[
+                    /* history */model[/* history */0],
+                    /* module_list */model[/* module_list */1],
+                    /* sidebar : record */[
+                      /* search_term */init$3[/* search_term */0],
+                      /* search_results */init$3[/* search_results */1],
+                      /* sidebar_links */init$3[/* sidebar_links */2],
+                      /* icon_selected */init$3[/* icon_selected */3],
+                      /* switch_selected */!model[/* sidebar */2][/* switch_selected */4]
                     ],
                     /* page */model[/* page */3]
                   ],
@@ -356,7 +381,7 @@ function update(model, msg) {
       case 0 : 
           var $$location = msg[0];
           var icon_selected = model[/* sidebar */2][/* icon_selected */3] ? !model[/* sidebar */2][/* icon_selected */3] : model[/* sidebar */2][/* icon_selected */3];
-          var init$3 = model[/* sidebar */2];
+          var init$4 = model[/* sidebar */2];
           return /* tuple */[
                   /* record */[
                     /* history : :: */[
@@ -365,10 +390,11 @@ function update(model, msg) {
                     ],
                     /* module_list */model[/* module_list */1],
                     /* sidebar : record */[
-                      /* search_term */init$3[/* search_term */0],
-                      /* search_results */init$3[/* search_results */1],
-                      /* sidebar_links */init$3[/* sidebar_links */2],
-                      /* icon_selected */icon_selected
+                      /* search_term */init$4[/* search_term */0],
+                      /* search_results */init$4[/* search_results */1],
+                      /* sidebar_links */init$4[/* sidebar_links */2],
+                      /* icon_selected */icon_selected,
+                      /* switch_selected */init$4[/* switch_selected */4]
                     ],
                     /* page */parse_hash_value($$location[/* hash */7])
                   ],
@@ -382,32 +408,34 @@ function update(model, msg) {
           var sidebar_links = List.map((function (param) {
                   return flipSidebarLinkSelected(sidebar_link_name, is_functions, param);
                 }), model[/* sidebar */2][/* sidebar_links */2]);
-          var init$4 = model[/* sidebar */2];
-          return /* tuple */[
-                  /* record */[
-                    /* history */model[/* history */0],
-                    /* module_list */model[/* module_list */1],
-                    /* sidebar : record */[
-                      /* search_term */init$4[/* search_term */0],
-                      /* search_results */init$4[/* search_results */1],
-                      /* sidebar_links */sidebar_links,
-                      /* icon_selected */init$4[/* icon_selected */3]
-                    ],
-                    /* page */model[/* page */3]
-                  ],
-                  Tea_cmd.none
-                ];
-      case 2 : 
           var init$5 = model[/* sidebar */2];
           return /* tuple */[
                   /* record */[
                     /* history */model[/* history */0],
                     /* module_list */model[/* module_list */1],
                     /* sidebar : record */[
-                      /* search_term */msg[0],
+                      /* search_term */init$5[/* search_term */0],
                       /* search_results */init$5[/* search_results */1],
-                      /* sidebar_links */init$5[/* sidebar_links */2],
-                      /* icon_selected */init$5[/* icon_selected */3]
+                      /* sidebar_links */sidebar_links,
+                      /* icon_selected */init$5[/* icon_selected */3],
+                      /* switch_selected */init$5[/* switch_selected */4]
+                    ],
+                    /* page */model[/* page */3]
+                  ],
+                  Tea_cmd.none
+                ];
+      case 2 : 
+          var init$6 = model[/* sidebar */2];
+          return /* tuple */[
+                  /* record */[
+                    /* history */model[/* history */0],
+                    /* module_list */model[/* module_list */1],
+                    /* sidebar : record */[
+                      /* search_term */msg[0],
+                      /* search_results */init$6[/* search_results */1],
+                      /* sidebar_links */init$6[/* sidebar_links */2],
+                      /* icon_selected */init$6[/* icon_selected */3],
+                      /* switch_selected */init$6[/* switch_selected */4]
                     ],
                     /* page */model[/* page */3]
                   ],

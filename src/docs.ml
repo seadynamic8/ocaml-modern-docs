@@ -53,10 +53,11 @@ let get_function_list sections =
 let create_sidebar_link_state module_list =
   module_list
   |> List.map (fun m ->
-    { name = m.module_name
-    ; selected = false
-    ; functions = get_function_list m.sections
+    { name               = m.module_name
+    ; selected           = false
+    ; functions          = get_function_list m.sections
     ; functions_selected = false
+    ; is_standard        = m.is_standard
     })
 
 let init () location =
@@ -64,13 +65,14 @@ let init () location =
   { history = [ location ]
   ; module_list
   ; sidebar =
-    { search_term = ""
-    ; search_results = []
-    ; sidebar_links = create_sidebar_link_state module_list
-    ; icon_selected = false
+    { search_term     = ""
+    ; search_results  = []
+    ; sidebar_links   = create_sidebar_link_state module_list
+    ; icon_selected   = false
+    ; switch_selected = false
     }
   ; page =
-    { name = "docs_home"
+    { name     = "docs_home"
     ; position = ""
     }
   }, Cmd.none
@@ -236,6 +238,13 @@ let update model msg =
         sidebar =
           { model.sidebar with
             icon_selected = not model.sidebar.icon_selected }
+      }, Cmd.none
+
+  | ToggleModuleSwitch ->
+      { model with
+        sidebar =
+          { model.sidebar with
+            switch_selected = not model.sidebar.switch_selected }
       }, Cmd.none
 
 

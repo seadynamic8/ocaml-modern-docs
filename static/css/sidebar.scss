@@ -106,6 +106,68 @@
 		font-size: 1.2rem;
 	}
 
+	.module-links-header {
+		width: 100%;
+
+		.switch {
+			margin: 0 auto;
+			font-size: 1rem;
+
+			label {
+				margin-right: 0.5rem;
+			}
+		}
+
+		.switch-selector {
+			position: relative;
+			display: inline-block;
+			width: 3rem;
+			height: 1.8rem;
+
+			input {
+				opacity: 0;
+				width: 0;
+				height: 0;
+
+				&:checked + .slider {
+					background-color: $switch-blue;
+				}
+
+				&:focus + .slider {
+					box-shadow: 0 0 1px $switch-blue;
+				}
+
+				&:checked + .slider:before {
+					transform: translateX(1.2rem);
+				}
+			}
+
+			.slider {
+				position: absolute;
+				cursor: pointer;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				background-color: #ccc;
+				border-radius: 34px;
+				transition: .4s;
+
+				&:before {
+					position: absolute;
+					content: "";
+					height: 1.2rem;
+					width: 1.2rem;
+					left: .3rem;
+					bottom: .3rem;
+					background-color: white;
+					border-radius: 50%;
+					transition: .4s;
+				}
+			}
+		}
+	}
+
 	.module-links {
 		list-style: none;
 
