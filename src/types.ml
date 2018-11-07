@@ -41,7 +41,7 @@ type sidebar_link =
   ; selected           : bool
   ; functions          : function_name list
   ; functions_selected : bool
-  ; is_standard        : bool
+  ; is_mod_standard    : bool
   }
 
 type sidebar =

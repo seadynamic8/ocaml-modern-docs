@@ -66,10 +66,10 @@ let module_sidebar_links sidebar =
     List.map (fun s -> view_sidebar_link s) sidebar.sidebar_links
   else
     sidebar.sidebar_links
-    |> List.filter (fun s -> s.is_standard)
+    |> List.filter (fun s -> s.is_mod_standard)
     |> List.map (fun s -> view_sidebar_link s)
 
-let module_links_header sidebar =
+let module_links_header =
   div
     [ class' "module-links-header" ]
     [ h3 [ id "modules-title" ] [ text "Modules" ]
@@ -129,7 +129,7 @@ let sidebar_content sidebar =
       ; classList [ "show-results", List.length sidebar.search_results > 0 ]
       ]
       (sidebar_search_results sidebar.search_results)
-  ; module_links_header sidebar
+  ; module_links_header
   ; ul
       [ class' "module-links" ]
       (module_sidebar_links sidebar)

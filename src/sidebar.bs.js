@@ -134,65 +134,63 @@ function module_sidebar_links(sidebar) {
     return List.map(view_sidebar_link, sidebar[/* sidebar_links */2]);
   } else {
     return List.map(view_sidebar_link, List.filter((function (s) {
-                        return s[/* is_standard */4];
+                        return s[/* is_mod_standard */4];
                       }))(sidebar[/* sidebar_links */2]));
   }
 }
 
-function module_links_header() {
-  return Tea_html.div(undefined, undefined, /* :: */[
-              Tea_html.class$prime("module-links-header"),
+var module_links_header = Tea_html.div(undefined, undefined, /* :: */[
+      Tea_html.class$prime("module-links-header"),
+      /* [] */0
+    ], /* :: */[
+      Tea_html.h3(undefined, undefined, /* :: */[
+            Tea_html.id("modules-title"),
+            /* [] */0
+          ], /* :: */[
+            Tea_html.text("Modules"),
+            /* [] */0
+          ]),
+      /* :: */[
+        Tea_html.div(undefined, undefined, /* :: */[
+              Tea_html.class$prime("switch"),
               /* [] */0
             ], /* :: */[
-              Tea_html.h3(undefined, undefined, /* :: */[
-                    Tea_html.id("modules-title"),
-                    /* [] */0
-                  ], /* :: */[
-                    Tea_html.text("Modules"),
+              Tea_html.label(undefined, undefined, /* [] */0, /* :: */[
+                    Tea_html.text("Standard"),
                     /* [] */0
                   ]),
               /* :: */[
-                Tea_html.div(undefined, undefined, /* :: */[
-                      Tea_html.class$prime("switch"),
+                Tea_html.label(undefined, undefined, /* :: */[
+                      Tea_html.class$prime("switch-selector"),
                       /* [] */0
                     ], /* :: */[
-                      Tea_html.label(undefined, undefined, /* [] */0, /* :: */[
-                            Tea_html.text("Standard"),
-                            /* [] */0
-                          ]),
-                      /* :: */[
-                        Tea_html.label(undefined, undefined, /* :: */[
-                              Tea_html.class$prime("switch-selector"),
+                      Tea_html.input$prime(undefined, undefined, /* :: */[
+                            Tea_html.type$prime("checkbox"),
+                            /* :: */[
+                              Tea_html.onClick(/* ToggleModuleSwitch */4),
                               /* [] */0
-                            ], /* :: */[
-                              Tea_html.input$prime(undefined, undefined, /* :: */[
-                                    Tea_html.type$prime("checkbox"),
-                                    /* :: */[
-                                      Tea_html.onClick(/* ToggleModuleSwitch */4),
-                                      /* [] */0
-                                    ]
-                                  ], /* [] */0),
-                              /* :: */[
-                                Tea_html.span(undefined, undefined, /* :: */[
-                                      Tea_html.class$prime("slider round"),
-                                      /* [] */0
-                                    ], /* [] */0),
-                                /* [] */0
-                              ]
-                            ]),
-                        /* :: */[
-                          Tea_html.label(undefined, undefined, /* [] */0, /* :: */[
-                                Tea_html.text("All"),
-                                /* [] */0
-                              ]),
-                          /* [] */0
-                        ]
+                            ]
+                          ], /* [] */0),
+                      /* :: */[
+                        Tea_html.span(undefined, undefined, /* :: */[
+                              Tea_html.class$prime("slider round"),
+                              /* [] */0
+                            ], /* [] */0),
+                        /* [] */0
                       ]
                     ]),
-                /* [] */0
+                /* :: */[
+                  Tea_html.label(undefined, undefined, /* [] */0, /* :: */[
+                        Tea_html.text("All"),
+                        /* [] */0
+                      ]),
+                  /* [] */0
+                ]
               ]
-            ]);
-}
+            ]),
+        /* [] */0
+      ]
+    ]);
 
 function sidebar_element_results(search_results) {
   return List.map((function (param) {
@@ -297,7 +295,7 @@ function sidebar_content(sidebar) {
                 ]
               ], sidebar_search_results(sidebar[/* search_results */1])),
           /* :: */[
-            module_links_header(sidebar),
+            module_links_header,
             /* :: */[
               Tea_html.ul(undefined, undefined, /* :: */[
                     Tea_html.class$prime("module-links"),
@@ -438,4 +436,4 @@ exports.sidebar_search_results = sidebar_search_results;
 exports.sidebar_content = sidebar_content;
 exports.sidebar_header = sidebar_header;
 exports.view_sidebar = view_sidebar;
-/* Tea_html Not a pure module */
+/* module_links_header Not a pure module */

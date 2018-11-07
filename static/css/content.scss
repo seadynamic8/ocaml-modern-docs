@@ -64,6 +64,16 @@
 			color: $ocaml-orange;
 		}
 
+		.name {
+			cursor: pointer;
+			pointer-events: auto;
+			color: $switch-blue;
+
+			&:hover, &:focus {
+				text-decoration: underline;
+			}
+		}
+
 		&.blink {
 			animation: blinkText 0.5s;
 		}

@@ -8,12 +8,29 @@ let innerHTML html =
 
 (* Elements *)
 
-let view_element_header name category content element_html =
-  h5
+let element_header_content module_name category name content =
+  let trimmed_category = category |> String.trim in
+  match trimmed_category with
+  | "module" | "module type" ->
+      [ span []
+          [ a
+              [ href ("#" ^ module_name ^ "." ^ name)
+              ; class' "name" ]
+              [ text name ]
+          ; text content
+          ]
+      ]
+  | _ ->
+      [ text content ]
+
+let view_element_header module_name category name content element_html =
+  (h5
     [ id name; class' "element-item" ]
-    [ span [ class' "category" ] [ text category ]
-    ; text (name ^ content )
-    ] :: element_html
+
+    (span [ class' "category" ] [ text category ]
+      :: element_header_content module_name category name content)
+  )
+  :: element_html
 
 let view_element_info info element_html =
   match info with
@@ -35,38 +52,40 @@ let parse_type_extra type_extra =
   | Some extra -> extra
   | None -> ""
 
-let view_element element_html element =
+let view_element module_name element_html element =
   match element with
   | Type (name, type_type, info) ->
       element_html
       |> view_element_info info
-      |> view_element_header name "type " (" = " ^ type_type)
+      |> view_element_header module_name "type " name (" = " ^ type_type)
   | Typevariant (name, type_extra, type_table, info) ->
       element_html
       |> view_element_info info
       |> view_element_type_table type_table
-      |> view_element_header name "type " (parse_type_extra type_extra)
+      |> view_element_header module_name "type " name (parse_type_extra type_extra)
   | Function (name, func_annotation, info) ->
       element_html
       |> view_element_info info
-      |> view_element_header name "val " (" : " ^ func_annotation)
+      |> view_element_header module_name "val " name (" : " ^ func_annotation)
   | Exception (name, exec_parameter, info) ->
       element_html
       |> view_element_info info
-      |> view_element_header name "exception " (parse_exception exec_parameter)
+      |> view_element_header module_name "exception " name (parse_exception exec_parameter)
   | Module (name, info) ->
       element_html
       |> view_element_info info
-      |> view_element_header name "module " (": sig .. end")
+      |> view_element_header module_name "module " name (": sig .. end")
   | Moduletype (name, info) ->
       element_html
       |> view_element_info info
-      |> view_element_header name "module type " (": sig .. end")
+      |> view_element_header module_name "module type " name (": sig .. end")
   | Include name ->
-      view_element_header name "include " "" element_html
+      view_element_header module_name "include " name "" element_html
 
-let view_elements elements =
-  List.map (fun e -> li [ class' "element" ] (view_element [] e)) elements
+let view_elements module_name elements =
+  List.map (fun e ->
+    li [ class' "element" ] (view_element module_name [] e)
+  ) elements
 
 (* Sections *)
 
@@ -80,20 +99,20 @@ let view_section_info section_info =
   | Some info -> div [ class' "info"; innerHTML info ] []
   | None -> span [] []
 
-let rec view_section section =
+let rec view_section module_name section =
   li [ class' "section" ]
     [ view_section_name section.section_name
     ; view_section_info section.section_info
     ; ul
         []
-        (view_elements section.elements)
+        (view_elements module_name section.elements)
     ; ul
         [ class' "sub-section" ]
-        (List.map (fun ss -> view_section ss) section.sub_sections)
+        (List.map (fun ss -> view_section module_name ss) section.sub_sections)
     ]
 
 let view_sections module_item =
-  List.map (fun s -> view_section s) module_item.sections
+  List.map (fun s -> view_section module_item.module_name s) module_item.sections
 
 let view_functor_table functor_info top_html =
   if String.length functor_info.table > 0 then
@@ -107,9 +126,9 @@ let view_module_info module_info top_html =
   else
     top_html
 
-let view_functor_sig functor_info top_html =
+let view_functor_sig module_name functor_info top_html =
   [ div [ id "functor-begin-sig"; innerHTML functor_info.begin_sig ] []
-  ; ul [ id "functor-elements" ] (view_elements functor_info.functor_elements)
+  ; ul [ id "functor-elements" ] (view_elements module_name functor_info.functor_elements)
   ; div [ id "functor-begin-sig"; innerHTML functor_info.end_sig ] []
   ] @ top_html
 
@@ -118,7 +137,7 @@ let view_module_top module_item =
   match module_item.functor_info with
   | Some functor_info ->
     []
-    |> view_functor_sig functor_info
+    |> view_functor_sig module_item.module_name functor_info
     |> view_module_info module_info
     |> view_functor_table functor_info
   | None ->

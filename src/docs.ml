@@ -57,7 +57,7 @@ let create_sidebar_link_state module_list =
     ; selected           = false
     ; functions          = get_function_list m.sections
     ; functions_selected = false
-    ; is_standard        = m.is_standard
+    ; is_mod_standard    = m.is_standard
     })
 
 let init () location =

@@ -61,7 +61,7 @@ function create_sidebar_link_state(module_list) {
                         /* selected */false,
                         /* functions */get_function_list(m[/* sections */2]),
                         /* functions_selected */false,
-                        /* is_standard */m[/* is_standard */3]
+                        /* is_mod_standard */m[/* is_standard */3]
                       ];
               }), module_list);
 }
@@ -131,7 +131,7 @@ function flipSidebarLinkSelected(sidebar_link_name, is_functions, sidebar_link) 
               /* selected */sidebar_link[/* selected */1],
               /* functions */sidebar_link[/* functions */2],
               /* functions_selected */!sidebar_link[/* functions_selected */3],
-              /* is_standard */sidebar_link[/* is_standard */4]
+              /* is_mod_standard */sidebar_link[/* is_mod_standard */4]
             ];
     } else {
       return /* record */[
@@ -139,7 +139,7 @@ function flipSidebarLinkSelected(sidebar_link_name, is_functions, sidebar_link) 
               /* selected */!sidebar_link[/* selected */1],
               /* functions */sidebar_link[/* functions */2],
               /* functions_selected */sidebar_link[/* functions_selected */3],
-              /* is_standard */sidebar_link[/* is_standard */4]
+              /* is_mod_standard */sidebar_link[/* is_mod_standard */4]
             ];
     }
   } else {
