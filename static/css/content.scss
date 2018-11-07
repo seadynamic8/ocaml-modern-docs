@@ -21,6 +21,29 @@
 		list-style: none;
 	}
 
+	#module-top {
+
+		#functor-begin-sig {
+
+			span[id^="MODULE"] {
+				font-weight: 600;
+				font-size: 1.2rem;
+			}
+
+			.sig_block {
+				margin-left: 1.5rem;
+			}
+		}
+
+		#functor-elements {
+			margin-left: 1.5rem;
+		}
+
+		.keyword {
+			color: $ocaml-orange;
+		}
+	}
+
 	.section {
 		.subtitle {
 			@include subtitle-header;
@@ -70,7 +93,7 @@
 		font-size: 0.8rem;
 	}
 
-	.code {
+	code {
 		border-radius: 2px;
 		color: #465F91;
 		background-color: #f5f5f5;

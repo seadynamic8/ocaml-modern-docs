@@ -199,15 +199,24 @@ function view_module_info(module_info, top_html) {
 function view_functor_sig(functor_info, top_html) {
   return Pervasives.$at(/* :: */[
               Tea_html.div(undefined, undefined, /* :: */[
-                    Vdom.prop("innerHTML", functor_info[/* begin_sig */0]),
-                    /* [] */0
+                    Tea_html.id("functor-begin-sig"),
+                    /* :: */[
+                      Vdom.prop("innerHTML", functor_info[/* begin_sig */0]),
+                      /* [] */0
+                    ]
                   ], /* [] */0),
               /* :: */[
-                Tea_html.ul(undefined, undefined, /* [] */0, view_elements(functor_info[/* functor_elements */1])),
+                Tea_html.ul(undefined, undefined, /* :: */[
+                      Tea_html.id("functor-elements"),
+                      /* [] */0
+                    ], view_elements(functor_info[/* functor_elements */1])),
                 /* :: */[
                   Tea_html.div(undefined, undefined, /* :: */[
-                        Vdom.prop("innerHTML", functor_info[/* end_sig */2]),
-                        /* [] */0
+                        Tea_html.id("functor-begin-sig"),
+                        /* :: */[
+                          Vdom.prop("innerHTML", functor_info[/* end_sig */2]),
+                          /* [] */0
+                        ]
                       ], /* [] */0),
                   /* [] */0
                 ]
@@ -253,7 +262,7 @@ function view_content(module_item) {
                     ]),
                 /* :: */[
                   Tea_html.div(undefined, undefined, /* :: */[
-                        Tea_html.class$prime("module_top"),
+                        Tea_html.id("module-top"),
                         /* [] */0
                       ], view_module_top(module_item)),
                   /* :: */[

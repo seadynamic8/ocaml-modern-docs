@@ -108,9 +108,9 @@ let view_module_info module_info top_html =
     top_html
 
 let view_functor_sig functor_info top_html =
-  [ div [ innerHTML functor_info.begin_sig ] []
-  ; ul [] (view_elements functor_info.functor_elements)
-  ; div [ innerHTML functor_info.end_sig ] []
+  [ div [ id "functor-begin-sig"; innerHTML functor_info.begin_sig ] []
+  ; ul [ id "functor-elements" ] (view_elements functor_info.functor_elements)
+  ; div [ id "functor-begin-sig"; innerHTML functor_info.end_sig ] []
   ] @ top_html
 
 let view_module_top module_item =
@@ -145,7 +145,7 @@ let view_content module_item =
   [ main
       [ id "module-content"; class' "content" ]
       [ h1 [ class' "title" ] [ text (parse_module_name module_item) ]
-      ; div [ class' "module_top" ] (view_module_top module_item)
+      ; div [ id "module-top" ] (view_module_top module_item)
       ; hr [] []
       ; section
         [ id "elements" ]
