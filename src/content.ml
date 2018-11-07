@@ -63,7 +63,7 @@ let view_element element_html element =
       |> view_element_info info
       |> view_element_header name "module type " (": sig .. end")
   | Include name ->
-      view_element_header name "include " "" []
+      view_element_header name "include " "" element_html
 
 let view_elements elements =
   List.map (fun e -> li [ class' "element" ] (view_element [] e)) elements

@@ -96,7 +96,7 @@ function view_element(element_html, element) {
     case 5 : 
         return view_element_header(element[0], "module type ", ": sig .. end", view_element_info(element[1], element_html));
     case 6 : 
-        return view_element_header(element[0], "include ", "", /* [] */0);
+        return view_element_header(element[0], "include ", "", element_html);
     
   }
 }
