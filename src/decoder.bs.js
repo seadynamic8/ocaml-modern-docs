@@ -38,6 +38,10 @@ function info(param) {
   return Json_decode.optional(Json_decode.string, param);
 }
 
+function type_extra(param) {
+  return Json_decode.optional(Json_decode.string, param);
+}
+
 function type_table(param) {
   return Json_decode.optional(Json_decode.string, param);
 }
@@ -62,6 +66,9 @@ function element_type_map(parameters, type_name) {
                   match$1[1],
                   match$1[2]
                 ]);
+    case "Include" : 
+        var x = Json_decode.string(parameters);
+        return /* Include */Block.__(6, [x]);
     case "Module" : 
         var match$2 = Json_decode.tuple2(Json_decode.string, info, parameters);
         return /* Module */Block.__(4, [
@@ -82,11 +89,12 @@ function element_type_map(parameters, type_name) {
                   match$4[2]
                 ]);
     case "Typevariant" : 
-        var match$5 = Json_decode.tuple3(Json_decode.string, type_table, info, parameters);
+        var match$5 = Json_decode.tuple4(Json_decode.string, type_extra, type_table, info, parameters);
         return /* Typevariant */Block.__(1, [
                   match$5[0],
                   match$5[1],
-                  match$5[2]
+                  match$5[2],
+                  match$5[3]
                 ]);
     default:
       return Pervasives.failwith("Unknown element type");
@@ -114,12 +122,28 @@ function section(json) {
         ];
 }
 
+function functor_parts(json) {
+  return /* record */[
+          /* begin_sig */Json_decode.field("begin_sig", Json_decode.string, json),
+          /* functor_elements */Json_decode.field("functor_elements", (function (param) {
+                  return Json_decode.list(element_type, param);
+                }), json),
+          /* end_sig */Json_decode.field("end_sig", Json_decode.string, json),
+          /* table */Json_decode.field("table", Json_decode.string, json)
+        ];
+}
+
 function module_parts(json) {
   return /* record */[
           /* module_name */Json_decode.field("module_name", Json_decode.string, json),
           /* module_info */Json_decode.field("module_info", Json_decode.string, json),
           /* sections */Json_decode.field("sections", (function (param) {
                   return Json_decode.list(section, param);
+                }), json),
+          /* is_standard */Json_decode.field("is_standard", Json_decode.bool, json),
+          /* is_module_type */Json_decode.field("is_module_type", Json_decode.bool, json),
+          /* functor_info */Json_decode.optional((function (param) {
+                  return Json_decode.field("functor_info", functor_parts, param);
                 }), json)
         ];
 }
@@ -133,12 +157,14 @@ var Decode = /* module */[
   /* name */Json_decode.string,
   /* info */info,
   /* type_type */Json_decode.string,
+  /* type_extra */type_extra,
   /* type_table */type_table,
   /* func_annotation */Json_decode.string,
   /* exec_parameter */exec_parameter,
   /* element_type_map */element_type_map,
   /* element_type */element_type,
   /* section */section,
+  /* functor_parts */functor_parts,
   /* module_parts */module_parts,
   /* decode_modules */decode_modules
 ];

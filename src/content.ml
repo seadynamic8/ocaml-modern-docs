@@ -30,17 +30,22 @@ let parse_exception exec_parameter =
   | Some exec_parameter -> " of " ^ exec_parameter
   | None -> ""
 
+let parse_type_extra type_extra =
+  match type_extra with
+  | Some extra -> extra
+  | None -> ""
+
 let view_element element =
   match element with
   | Type (name, type_type, info) ->
       []
       |> view_element_info info
       |> view_element_header name "type " (" = " ^ type_type)
-  | Typevariant (name, type_table, info) ->
+  | Typevariant (name, type_extra, type_table, info) ->
       []
       |> view_element_info info
       |> view_element_type_table type_table
-      |> view_element_header name "type " (" =")
+      |> view_element_header name "type " (parse_type_extra type_extra)
   | Function (name, func_annotation, info) ->
       []
       |> view_element_info info
@@ -57,6 +62,8 @@ let view_element element =
       []
       |> view_element_info info
       |> view_element_header name "module type " (": sig .. end")
+  | Include name ->
+      view_element_header name "include " "" []
 
 let view_elements elements =
   List.map (fun e -> li [ class' "element" ] (view_element e)) elements

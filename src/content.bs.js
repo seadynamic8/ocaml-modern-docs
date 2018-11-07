@@ -73,12 +73,20 @@ function parse_exception(exec_parameter) {
   }
 }
 
+function parse_type_extra(type_extra) {
+  if (type_extra !== undefined) {
+    return type_extra;
+  } else {
+    return "";
+  }
+}
+
 function view_element(element) {
   switch (element.tag | 0) {
     case 0 : 
         return view_element_header(element[0], "type ", " = " + element[1], view_element_info(element[2], /* [] */0));
     case 1 : 
-        return view_element_header(element[0], "type ", " =", view_element_type_table(element[1], view_element_info(element[2], /* [] */0)));
+        return view_element_header(element[0], "type ", parse_type_extra(element[1]), view_element_type_table(element[2], view_element_info(element[3], /* [] */0)));
     case 2 : 
         return view_element_header(element[0], "val ", " : " + element[1], view_element_info(element[2], /* [] */0));
     case 3 : 
@@ -87,6 +95,8 @@ function view_element(element) {
         return view_element_header(element[0], "module ", ": sig .. end", view_element_info(element[1], /* [] */0));
     case 5 : 
         return view_element_header(element[0], "module type ", ": sig .. end", view_element_info(element[1], /* [] */0));
+    case 6 : 
+        return view_element_header(element[0], "include ", "", /* [] */0);
     
   }
 }
@@ -202,6 +212,7 @@ exports.view_element_header = view_element_header;
 exports.view_element_info = view_element_info;
 exports.view_element_type_table = view_element_type_table;
 exports.parse_exception = parse_exception;
+exports.parse_type_extra = parse_type_extra;
 exports.view_element = view_element;
 exports.view_elements = view_elements;
 exports.view_section_name = view_section_name;

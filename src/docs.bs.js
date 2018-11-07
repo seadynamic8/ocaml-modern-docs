@@ -20,7 +20,7 @@ var Caml_builtin_exceptions = require("bs-platform/lib/js/caml_builtin_exception
 
 var json = JSON.parse(Fs.readFileSync("parser/modules.json", "utf8"));
 
-var get_module_list = Decoder.Decode[/* decode_modules */11](json);
+var get_module_list = Decoder.Decode[/* decode_modules */13](json);
 
 function get_function_names(elements, functions) {
   return List.rev(List.fold_left((function (functions, e) {
@@ -241,6 +241,8 @@ function elements_search_results(element_results, search_term, section_elements)
                       } else {
                         return element_results;
                       }
+                  case 6 : 
+                      return element_results;
                   
                 }
               }), element_results, section_elements);
