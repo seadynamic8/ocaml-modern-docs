@@ -96,11 +96,27 @@ let view_sections module_item =
   List.map (fun s -> view_section s) module_item.sections
 
 
+let parse_module_name module_item =
+  let is_functor =
+    match module_item.functor_info with
+    | Some _f -> true
+    | None -> false
+  in
+  let module_identifier =
+    if module_item.is_module_type then
+      "Module Type: "
+    else if is_functor then
+      "Functor: "
+    else (* Module *)
+      ""
+  in
+    module_identifier ^ module_item.module_name
+
 
 let view_content module_item =
   [ main
       [ id "module-content"; class' "content" ]
-      [ h1 [ class' "title" ] [ text module_item.module_name ]
+      [ h1 [ class' "title" ] [ text (parse_module_name module_item) ]
       ; div [ class' "info"; innerHTML module_item.module_info ] []
       ; hr [] []
       ; section

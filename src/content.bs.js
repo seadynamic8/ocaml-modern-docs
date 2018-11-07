@@ -164,6 +164,15 @@ function view_sections(module_item) {
   return List.map(view_section, module_item[/* sections */2]);
 }
 
+function parse_module_name(module_item) {
+  var match = module_item[/* functor_info */5];
+  var is_functor = match !== undefined;
+  var module_identifier = module_item[/* is_module_type */4] ? "Module Type: " : (
+      is_functor ? "Functor: " : ""
+    );
+  return module_identifier + module_item[/* module_name */0];
+}
+
 function view_content(module_item) {
   return /* :: */[
           Tea_html.main(undefined, undefined, /* :: */[
@@ -177,7 +186,7 @@ function view_content(module_item) {
                       Tea_html.class$prime("title"),
                       /* [] */0
                     ], /* :: */[
-                      Tea_html.text(module_item[/* module_name */0]),
+                      Tea_html.text(parse_module_name(module_item)),
                       /* [] */0
                     ]),
                 /* :: */[
@@ -219,5 +228,6 @@ exports.view_section_name = view_section_name;
 exports.view_section_info = view_section_info;
 exports.view_section = view_section;
 exports.view_sections = view_sections;
+exports.parse_module_name = parse_module_name;
 exports.view_content = view_content;
 /* Tea_html Not a pure module */
