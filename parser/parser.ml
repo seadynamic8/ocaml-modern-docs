@@ -464,34 +464,3 @@ let _ =
     |> output_string ch;
 
     close_out ch
-
-
-
-(* let index_node = read_file (index_dir ^ "stdlib.html") |> parse
-
-let extra_files =
-  [ "Pervasives.html"
-  ; "Map.Make.html"
-  ; "Str.html"
-  ; "Unix.html"
-  ; "UnixLabels.html"
-  ; "Thread.html"
-  ; "Mutex.html"
-  ; "Condition.html"
-  ; "Event.html"
-  ; "ThreadUnix.html"
-  ; "Graphics.html"
-  ; "Dynlink.html"
-  ]
-
-let standard_files =
-  index_node $$ ".li-links a"
-  |> to_list
-  |> List.map (fun link -> R.attribute "href" link)
-
-let all_sorted_files =
-  extra_files
-  |> List.fold_left (fun standard_files file ->
-      (ref_dir ^ file) :: standard_files
-    ) standard_files
-  |> List.sort compare *)
