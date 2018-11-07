@@ -41,7 +41,7 @@ module Decode = struct
   let variant parameter_decoder json =
     if Js.Array.isArray json then begin
       let source = (Obj.magic (json : Js.Json.t) : Js.Json.t array) in
-      
+
       try
         let first = Array.unsafe_get source 0 in
         let decoded_type = string first in
@@ -85,7 +85,7 @@ module Decode = struct
 
   let element_type =
     variant element_type_map
-    
+
   let rec section json =
     { section_name = json |> optional (field "section_name" string)
     ; section_info = json |> optional (field "section_info" string)
@@ -99,7 +99,7 @@ module Decode = struct
     ; sections    = json |> field "sections" (list section)
     }
 
-  let decode_modules = 
+  let decode_modules =
     list module_parts
 
 end

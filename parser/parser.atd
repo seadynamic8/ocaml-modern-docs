@@ -2,17 +2,19 @@ type name = string
 type info = string nullable
 
 type type_type       = string
+type type_extra      = string nullable
 type type_table      = string nullable
 type func_annotation = string
 type exec_parameter  = string nullable
 
 type element_type =
   [ Type of        ( name * type_type * info )
-  | Typevariant of ( name * type_table * info )
+  | Typevariant of ( name * type_extra * type_table * info )
   | Function of    ( name * func_annotation * info )
   | Exception of   ( name * exec_parameter * info )
   | Module of      ( name * info )
   | Moduletype of  ( name * info )
+  | Include of     name
   ] <ocaml repr="classic">
 
 type section =
@@ -22,17 +24,20 @@ type section =
   ; sub_sections : section list
   }
 
-type module_parts =
-  { module_name : string
-  ; module_info : string
-  ; sections    : section list
+type functor_parts =
+  { begin_sig         : string
+  ; functor_elements  : element_type list
+  ; end_sig           : string
+  ; table             : string
   }
 
-type sec_element_type =
-  [ Element
-  | MainSection
-  | SubSection
-  | End
-  ] <ocaml repr="classic">
+type module_parts =
+  { module_name    : string
+  ; module_info    : string
+  ; sections       : section list
+  ; is_standard    : bool
+  ; is_module_type : bool
+  ; functor_info   : functor_parts nullable
+  }
 
 type modules = module_parts list

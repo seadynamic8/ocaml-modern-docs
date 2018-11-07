@@ -1,7 +1,11 @@
-(* #require "lambdasoup" *)
-
 open Soup
 open Parser_t
+
+type sec_element_type =
+  | Element
+  | MainSection
+  | SubSection
+  | End
 
 let blank_section =
   { section_name = None
@@ -22,11 +26,14 @@ let ref_dir = "libref/"
 let output_filename = "modules.json"
 
 let parse_html_info node =
-  node
-  |> children
-  |> to_list
-  |> List.map (fun elem -> to_string elem)
-  |> String.concat ""
+  let html_info =
+    node
+    |> children
+    |> to_list
+    |> List.map (fun elem -> to_string elem)
+    |> String.concat ""
+  in
+    (node |> next_element, html_info)
 
 let node_class node =
   let node_classes = node |> classes in
@@ -70,8 +77,7 @@ let parse_next_nodes node =
 
     begin match node_class next_node with
     | "info" ->
-      let next_next_node = next_node |> next_element in
-      let div_info = parse_html_info next_node in
+      let (next_next_node, div_info) = parse_html_info next_node in
 
       begin match next_next_node with
       | Some next_next_node ->
@@ -88,26 +94,34 @@ let parse_next_nodes node =
         end
 
       | None ->
-        (Some div_info, None, Some next_node)
+        (* let _ = print_endline ("name: " ^ (next_node |> R.parent |> R.next_element |> to_string)) in *)
+        (Some div_info, None, None)
       end
 
     | "typetable" ->
-      let next_next_node = next_node |> next_element in
-      let type_table = parse_html_info next_node in
+      let (next_next_node, type_table) = parse_html_info next_node in
 
       begin match next_next_node with
       | Some next_next_node ->
 
-        begin match node_class next_next_node with
-        | "info" ->
-          let div_info = parse_html_info next_next_node in
-          (Some div_info, Some type_table, next_next_node |> next_element)
-        | _ ->
-          (None, Some type_table, Some next_next_node)
-        end
+        (* Exception for Location.html *)
+        if name next_next_node = "p" then
+          let (next_next_next_node, div_info) = parse_html_info next_next_node in
+          (* let _ = print_endline ("type_table: " ^ type_table) in *)
+
+          (Some div_info, Some type_table, next_next_next_node)
+        else
+          begin match node_class next_next_node with
+          | "info" ->
+            let (next_next_next_node, div_info) = parse_html_info next_next_node in
+
+            (Some div_info, Some type_table, next_next_next_node)
+          | _ ->
+            (None, Some type_table, Some next_next_node)
+          end
 
       | None ->
-        (None, Some type_table, Some next_node)
+        (None, Some type_table, None)
       end
 
     (* Exception for Format -> Formatted pretty-printing (function info not in div) *)
@@ -125,10 +139,16 @@ let parse_element node =
 
   let parsed_element =
     match trimmed_texts node with
-    | "type" :: name :: _sep :: type_type :: _tl ->
+    | "type" :: name :: ":" :: type_type :: _tl ->
         Type (name, type_type, div_info)
-    | "type" :: name :: _tl ->
-        Typevariant (name, type_table, div_info)
+    | "type" :: name :: type_extra ->
+        let type_extra =
+          if List.length type_extra > 0 then
+            Some (String.concat " " type_extra)
+          else
+            None
+        in
+        Typevariant (name, type_extra, type_table, div_info)
     | "val" :: name :: _sep :: tl ->
         let annotation = String.concat " " tl in
         Function (name, annotation, div_info)
@@ -140,10 +160,12 @@ let parse_element node =
         Module (name, div_info)
     | "module type" :: name :: _tl ->
         Moduletype (name, div_info)
+    | "include" :: name :: _tl ->
+        Include name
     | _ ->
         let _ = print_endline ("prev node: " ^ (node |> R.previous_element |> name)) in
         raise (Failure ("Can't parse element: " ^ (node |> name) ^
-          "\n trimmed_texts: " ^ (node |> trimmed_texts |> String.concat "") ))
+          "\n trimmed_texts: " ^ (node |> trimmed_texts |> String.concat "|") ))
   in
     (next_element, parsed_element)
 
@@ -265,8 +287,7 @@ let is_new_section node =
 (* Sections are either the default one with no heading or has a heading *)
 let rec process_sections (node, m) =
   match is_new_section node with
-  | None ->
-      { m with sections = List.rev m.sections }
+  | None -> { m with sections = List.rev m.sections }
 
   | Some node ->
       let (next_section_node, new_section) = process_section (node, blank_section) in
@@ -274,32 +295,179 @@ let rec process_sections (node, m) =
         (next_section_node, { m with sections = new_section :: m.sections })
 
 let process_after_top (node, m) =
-  let node = node $ "hr" |> next_element in
+  let node =
+    if name node = "hr" then
+      node |> next_element
+    else
+      raise (Failure "this should be 'hr' element")
+  in
     process_sections (node, m)
 
-let parse_top (node, m) =
-  let module_name = node $ "h1 a" |> R.leaf_text in
-  let module_info = node $ ".module.top .info-desc" in
-    (node,
-    { m with
-      module_name;
-      module_info = parse_html_info module_info })
 
-let blank_module =
-  { module_name = ""
-  ; module_info = ""
-  ; sections    = []
+let blank_functor =
+  { begin_sig        = ""
+  ; functor_elements = []
+  ; end_sig          = ""
+  ; table            = ""
   }
 
-let parse_file file =
-  let top_node = read_file file |> parse in
+let parse_module_name (node, m) =
+  let node = node $ "h1" in
+  let m =
+    match node |> trimmed_texts with
+    | "Module" :: [ module_name ] -> { m with module_name }
+    | "Module type" :: [ module_name ] ->
+        { m with module_name; is_module_type = true }
+    | "Functor" :: [ module_name ] ->
+        { m with module_name; functor_info = Some blank_functor }
+    | mod_name ->
+        raise (Failure ("can't parse module name: " ^ (mod_name |> String.concat " ")))
+  in
+    (node |> R.next_element, m)
+
+let rec parse_functor_element_nodes ?(is_finished=false) node functor_elements =
+  match name node with
+  | _ when is_finished ->
+    (node |> R.parent |> R.next_element, List.rev functor_elements)
+  | "pre" ->
+    let (next_node, parsed_element) = parse_element node in
+
+    begin match next_node with
+    | Some n ->
+      parse_functor_element_nodes n (parsed_element :: functor_elements)
+    | None ->
+      parse_functor_element_nodes ~is_finished:true node (parsed_element :: functor_elements)
+    end
+  | _ ->
+    raise (Failure ("Error: parse_funtor_element_nodes: " ^ (name node)
+                                         ^ " to_string: " ^ (to_string node)))
+
+let parse_functor_elements node functor_elements =
+  if (name node = "div") && (node |> classes |> List.hd = "sig_block") then
+    parse_functor_element_nodes (node |> R.child_element) functor_elements
+  else
+    (node, functor_elements)
+
+let parse_module_info (node, m) =
+  let node = node |> R.next_element in (* ignore top module sig *)
+  match node |> classes with
+  | ["info"; _module; "top"] ->
+      let (_next_node, module_info) = parse_html_info (node |> R.child_element) in
+      (node |> R.next_element, { m with module_info })
+  | _ -> (node, { m with module_info = "" })
+
+let parse_end_sig node =
+  if name node = "pre" then
+    parse_html_info node
+  else
+    (Some node, "")
+
+let parse_functor_module_info node =
+  if name node = "div" then
+    parse_html_info node
+  else
+    (Some node, "")
+
+let parse_functor_table node =
+  if name node = "table" then
+    parse_html_info node
+  else
+    (Some node, "")
+
+let parse_functor_info (node, m) =
+  match m.functor_info with
+  | Some _functor ->
+      let (next_node, begin_sig)        = parse_html_info node in
+      let (next_node, functor_elements) = parse_functor_elements (require next_node) [] in
+      let (next_node, end_sig)          = parse_end_sig next_node in
+      let (next_node, module_info)      = parse_functor_module_info (require next_node) in
+      let (next_node, table)            = parse_functor_table (require next_node) in
+
+      let functor_info = Some { begin_sig; functor_elements; end_sig; table } in
+      (require next_node, { m with module_info; functor_info })
+  | None ->
+      parse_module_info (node, m)
+
+let parse_top (node, m) =
+  (node, m)
+  |> parse_module_name
+  |> parse_functor_info
+
+let mark_standard_file standard_files file (node, m) =
+  if List.mem file standard_files then
+    (node, { m with is_standard = true })
+  else
+    (node, m)
+
+let blank_module =
+  { module_name    = ""
+  ; module_info    = ""
+  ; sections       = []
+  ; is_standard    = false
+  ; is_module_type = false
+  ; functor_info   = None
+  }
+
+let parse_file standard_files file =
+  let top_node = read_file (index_dir ^ ref_dir ^ file) |> parse in
 
   (top_node, blank_module)
+  |> mark_standard_file standard_files file
   |> parse_top
   |> process_after_top
 
+let get_standard_files =
+  let std_files =
+    (index_dir ^ "stdlib.html")
+    |> read_file
+    |> parse
+    |> select ".li-links a"
+    |> to_list
+    |> List.map (fun link ->
+      let href = R.attribute "href" link in
+      match Str.split (Str.regexp "/") href with
+      | _hd :: [ filename ] -> filename
+      | _ -> raise (Failure "Can't split filename")
+      )
+  in
+    List.sort compare ("Pervasives.html" :: std_files)
 
-let index_node = read_file (index_dir ^ "stdlib.html") |> parse
+let all_files =
+  (index_dir ^ ref_dir)
+  |> Sys.readdir
+  |> Array.to_list
+  |> List.filter (fun file ->
+    try
+      if (Str.search_forward (Str.regexp "index\\|type\\|style") file 0) == 0 then
+         false
+      else
+         true
+    with
+      Not_found -> true
+    )
+
+let _ =
+  let ch = open_out output_filename in
+  let standard_files = get_standard_files in
+
+    all_files
+    |> List.map (fun file ->
+        try
+          parse_file standard_files file
+        with
+          | Failure msg ->
+            print_endline ("error file: " ^ file ^ "\n error msg: " ^ msg);
+            blank_module
+      )
+    |> Parser_j.string_of_modules
+    |> Yojson.Safe.prettify
+    |> output_string ch;
+
+    close_out ch
+
+
+
+(* let index_node = read_file (index_dir ^ "stdlib.html") |> parse
 
 let extra_files =
   [ "Pervasives.html"
@@ -326,22 +494,4 @@ let all_sorted_files =
   |> List.fold_left (fun standard_files file ->
       (ref_dir ^ file) :: standard_files
     ) standard_files
-  |> List.sort compare
-
-let _ =
-  let ch = open_out output_filename in
-
-    all_sorted_files
-    |> List.map (fun file ->
-        try
-          parse_file (index_dir ^ file)
-        with
-          | Failure msg ->
-            print_endline ("error file: " ^ file ^ "\n error msg: " ^ msg);
-            blank_module
-      )
-    |> Parser_j.string_of_modules
-    |> Yojson.Safe.prettify
-    |> output_string ch;
-
-    close_out ch
+  |> List.sort compare *)

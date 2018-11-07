@@ -1,6 +1,6 @@
 (executable
  (name parser)
- (libraries lambdasoup biniou yojson atdgen))
+ (libraries lambdasoup biniou yojson atdgen str))
 
 (rule
  (targets parser_j.ml parser_j.mli)
