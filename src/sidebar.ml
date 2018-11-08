@@ -138,7 +138,7 @@ let sidebar_content sidebar =
 let sidebar_header sidebar =
   [ a
       [ href "#docs_home" ]
-      [ img [ src "http://ocaml.org/img/colour-logo-white.svg"; id "logo" ] []
+      [ img [ src "https://ocaml.org/img/colour-logo-white.svg"; id "logo" ] []
       ]
   ; h5 [ id "version" ] [ text "v4.07 (Unofficial)" ]
   ; h6

@@ -314,7 +314,7 @@ function sidebar_header(sidebar) {
                 /* [] */0
               ], /* :: */[
                 Tea_html.img(undefined, undefined, /* :: */[
-                      Tea_html.src("http://ocaml.org/img/colour-logo-white.svg"),
+                      Tea_html.src("https://ocaml.org/img/colour-logo-white.svg"),
                       /* :: */[
                         Tea_html.id("logo"),
                         /* [] */0
