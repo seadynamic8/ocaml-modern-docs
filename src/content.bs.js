@@ -21,7 +21,7 @@ function element_header_content(module_name, category, name, content) {
         break;
     default:
       return /* :: */[
-              Tea_html.text(content),
+              Tea_html.text(name + content),
               /* [] */0
             ];
   }

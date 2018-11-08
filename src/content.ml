@@ -21,7 +21,7 @@ let element_header_content module_name category name content =
           ]
       ]
   | _ ->
-      [ text content ]
+      [ text (name ^ content) ]
 
 let view_element_header module_name category name content element_html =
   (h5
