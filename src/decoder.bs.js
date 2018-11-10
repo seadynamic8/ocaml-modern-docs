@@ -81,9 +81,9 @@ function element_type_map(parameters, type_name) {
                   match$3[0],
                   match$3[1]
                 ]);
-    case "Type" : 
+    case "Typepoly" : 
         var match$4 = Json_decode.tuple3(Json_decode.string, Json_decode.string, info, parameters);
-        return /* Type */Block.__(0, [
+        return /* Typepoly */Block.__(0, [
                   match$4[0],
                   match$4[1],
                   match$4[2]

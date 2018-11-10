@@ -134,7 +134,7 @@ let elements_search_results element_results search_term section_elements =
   section_elements
   |> List.fold_left (fun element_results element ->
       match element with
-      | Type (name, _, _) when search_term_matches_name search_term name ->
+      | Typepoly (name, _, _) when search_term_matches_name search_term name ->
           update_element_results "Type" name element_results
 
       | Typevariant (name, _, _, _) when search_term_matches_name search_term name ->

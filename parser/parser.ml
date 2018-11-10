@@ -25,7 +25,25 @@ let ref_dir = "libref/"
 
 let output_filename = "modules.json"
 
+let update_link link=
+  let new_link_href = 
+    "#" ^ 
+    (link 
+    |> R.attribute "href"
+    |> Str.split 
+      (Str.regexp ".html#?\\(MODULETYPE\\|TYPE\\|VAL\\|EXCEPTION\\|MODULE\\)?") 
+    |> String.concat "-")
+  in
+    set_attribute "href" new_link_href link
+
+let replace_links node =
+  node
+  |> select "a"
+  |> to_list
+  |> List.map (fun link -> update_link link)
+
 let parse_html_info node =
+  let _ = replace_links node in
   let html_info =
     node
     |> children
@@ -139,8 +157,8 @@ let parse_element node =
 
   let parsed_element =
     match trimmed_texts node with
-    | "type" :: name :: ":" :: type_type :: _tl ->
-        Type (name, type_type, div_info)
+    | "type" :: type_type :: [ name ] when (name <> "=") && (name <> "= {") ->
+        Typepoly (name, type_type, div_info)
     | "type" :: name :: type_extra ->
         let type_extra =
           if List.length type_extra > 0 then
@@ -148,9 +166,10 @@ let parse_element node =
           else
             None
         in
+        (* TODO  - Should be called like a 'generic' type *)
         Typevariant (name, type_extra, type_table, div_info)
-    | "val" :: name :: _sep :: tl ->
-        let annotation = String.concat " " tl in
+    | "val" :: name :: _sep :: _tl ->
+        let (_, annotation) = node |> R.select_one ".type" |> parse_html_info in
         Function (name, annotation, div_info)
     | "exception" :: name :: _sep :: parameter :: _tl ->
         Exception (name, Some parameter, div_info)

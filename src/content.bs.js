@@ -11,45 +11,72 @@ function innerHTML(html) {
   return Vdom.prop("innerHTML", html);
 }
 
-function element_header_content(module_name, category, name, content) {
+function element_header_content(module_name, category, name, content, is_poly) {
   var trimmed_category = $$String.trim(category);
   var exit = 0;
   switch (trimmed_category) {
     case "module" : 
     case "module type" : 
-        exit = 1;
+        exit = 2;
         break;
-    default:
-      return /* :: */[
-              Tea_html.text(name + content),
-              /* [] */0
-            ];
-  }
-  if (exit === 1) {
-    return /* :: */[
-            Tea_html.span(undefined, undefined, /* [] */0, /* :: */[
-                  Tea_html.a(undefined, undefined, /* :: */[
-                        Tea_html.href("#" + (module_name + ("." + name))),
-                        /* :: */[
-                          Tea_html.class$prime("name"),
-                          /* [] */0
-                        ]
-                      ], /* :: */[
-                        Tea_html.text(name),
+    case "type" : 
+        if (is_poly) {
+          return /* :: */[
+                  Tea_html.text(content + (" " + name)),
+                  /* [] */0
+                ];
+        } else {
+          exit = 1;
+        }
+        break;
+    case "val" : 
+        return /* :: */[
+                Tea_html.span(undefined, undefined, /* [] */0, /* :: */[
+                      Tea_html.text(name + " "),
+                      /* [] */0
+                    ]),
+                /* :: */[
+                  Tea_html.span(undefined, undefined, /* :: */[
+                        Vdom.prop("innerHTML", content),
                         /* [] */0
-                      ]),
-                  /* :: */[
-                    Tea_html.text(content),
-                    /* [] */0
-                  ]
-                ]),
-            /* [] */0
-          ];
+                      ], /* [] */0),
+                  /* [] */0
+                ]
+              ];
+    default:
+      exit = 1;
   }
-  
+  switch (exit) {
+    case 1 : 
+        return /* :: */[
+                Tea_html.text(name + (" " + content)),
+                /* [] */0
+              ];
+    case 2 : 
+        return /* :: */[
+                Tea_html.span(undefined, undefined, /* [] */0, /* :: */[
+                      Tea_html.a(undefined, undefined, /* :: */[
+                            Tea_html.href("#" + (module_name + ("." + name))),
+                            /* :: */[
+                              Tea_html.class$prime("name"),
+                              /* [] */0
+                            ]
+                          ], /* :: */[
+                            Tea_html.text(name),
+                            /* [] */0
+                          ]),
+                      /* :: */[
+                        Tea_html.text(content),
+                        /* [] */0
+                      ]
+                    ]),
+                /* [] */0
+              ];
+    
+  }
 }
 
-function view_element_header(module_name, category, name, content, element_html) {
+function view_element_header(module_name, category, name, content, is_poly, element_html) {
   return /* :: */[
           Tea_html.h5(undefined, undefined, /* :: */[
                 Tea_html.id(name),
@@ -65,7 +92,7 @@ function view_element_header(module_name, category, name, content, element_html)
                       Tea_html.text(category),
                       /* [] */0
                     ]),
-                element_header_content(module_name, category, name, content)
+                element_header_content(module_name, category, name, content, is_poly)
               ]),
           element_html
         ];
@@ -104,7 +131,7 @@ function view_element_type_table(type_table, element_html) {
 
 function parse_exception(exec_parameter) {
   if (exec_parameter !== undefined) {
-    return " of " + exec_parameter;
+    return "of " + exec_parameter;
   } else {
     return "";
   }
@@ -121,19 +148,19 @@ function parse_type_extra(type_extra) {
 function view_element(module_name, element_html, element) {
   switch (element.tag | 0) {
     case 0 : 
-        return view_element_header(module_name, "type ", element[0], " = " + element[1], view_element_info(element[2], element_html));
+        return view_element_header(module_name, "type ", element[0], element[1], true, view_element_info(element[2], element_html));
     case 1 : 
-        return view_element_header(module_name, "type ", element[0], parse_type_extra(element[1]), view_element_type_table(element[2], view_element_info(element[3], element_html)));
+        return view_element_header(module_name, "type ", element[0], parse_type_extra(element[1]), false, view_element_type_table(element[2], view_element_info(element[3], element_html)));
     case 2 : 
-        return view_element_header(module_name, "val ", element[0], " : " + element[1], view_element_info(element[2], element_html));
+        return view_element_header(module_name, "val ", element[0], ": " + element[1], false, view_element_info(element[2], element_html));
     case 3 : 
-        return view_element_header(module_name, "exception ", element[0], parse_exception(element[1]), view_element_info(element[2], element_html));
+        return view_element_header(module_name, "exception ", element[0], parse_exception(element[1]), false, view_element_info(element[2], element_html));
     case 4 : 
-        return view_element_header(module_name, "module ", element[0], ": sig .. end", view_element_info(element[1], element_html));
+        return view_element_header(module_name, "module ", element[0], ": sig .. end", false, view_element_info(element[1], element_html));
     case 5 : 
-        return view_element_header(module_name, "module type ", element[0], ": sig .. end", view_element_info(element[1], element_html));
+        return view_element_header(module_name, "module type ", element[0], ": sig .. end", false, view_element_info(element[1], element_html));
     case 6 : 
-        return view_element_header(module_name, "include ", element[0], "", element_html);
+        return view_element_header(module_name, "include ", element[0], "", false, element_html);
     
   }
 }

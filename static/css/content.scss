@@ -11,9 +11,12 @@
 #module-content {
 
 	a {
-		cursor: text;
-		pointer-events: none;
-		color: inherit;
+		// Standard link blue
+		color: rgb(0, 0, 238);
+
+		&:hover, &:focus {
+			text-decoration: underline;
+		}
 	}
 
 	ul,
@@ -62,16 +65,6 @@
 
 		.category {
 			color: $ocaml-orange;
-		}
-
-		.name {
-			cursor: pointer;
-			pointer-events: auto;
-			color: $switch-blue;
-
-			&:hover, &:focus {
-				text-decoration: underline;
-			}
 		}
 
 		&.blink {

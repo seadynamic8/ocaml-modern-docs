@@ -8,7 +8,7 @@ type func_annotation = string
 type exec_parameter  = string option
 
 type element_type
-  = Type of        name * type_type * info
+  = Typepoly of    name * type_type * info
   | Typevariant of name * type_extra * type_table * info
   | Function of    name * func_annotation * info
   | Exception of   name * exec_parameter * info
@@ -70,9 +70,9 @@ module Decode = struct
 
   let element_type_map parameters type_name =
     match type_name with
-      | "Type" ->
+      | "Typepoly" ->
           let (x, y, z) = parameters |> tuple3 name type_type info in
-          Type (x, y, z)
+          Typepoly (x, y, z)
       | "Typevariant" ->
           let (a, b, c, d) = parameters |> tuple4 name type_extra type_table info in
           Typevariant (a, b, c, d)

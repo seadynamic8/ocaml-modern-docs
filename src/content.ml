@@ -8,9 +8,11 @@ let innerHTML html =
 
 (* Elements *)
 
-let element_header_content module_name category name content =
+let element_header_content module_name category name content is_poly =
   let trimmed_category = category |> String.trim in
   match trimmed_category with
+  | "type" when is_poly ->
+      [ text (content ^ " " ^ name) ]
   | "module" | "module type" ->
       [ span []
           [ a
@@ -20,15 +22,19 @@ let element_header_content module_name category name content =
           ; text content
           ]
       ]
+  | "val" ->
+      [ span [] [ text (name ^ " ") ]
+      ; span [ innerHTML content ] [] 
+      ]
   | _ ->
-      [ text (name ^ content) ]
+      [ text (name ^ " " ^ content) ]
 
-let view_element_header module_name category name content element_html =
+let view_element_header module_name category name content is_poly element_html =
   (h5
     [ id name; class' "element-item" ]
 
     (span [ class' "category" ] [ text category ]
-      :: element_header_content module_name category name content)
+      :: element_header_content module_name category name content is_poly)
   )
   :: element_html
 
@@ -44,7 +50,7 @@ let view_element_type_table type_table element_html =
 
 let parse_exception exec_parameter =
   match exec_parameter with
-  | Some exec_parameter -> " of " ^ exec_parameter
+  | Some exec_parameter -> "of " ^ exec_parameter
   | None -> ""
 
 let parse_type_extra type_extra =
@@ -54,33 +60,33 @@ let parse_type_extra type_extra =
 
 let view_element module_name element_html element =
   match element with
-  | Type (name, type_type, info) ->
+  | Typepoly (name, type_type, info) ->
       element_html
       |> view_element_info info
-      |> view_element_header module_name "type " name (" = " ^ type_type)
+      |> view_element_header module_name "type " name type_type true
   | Typevariant (name, type_extra, type_table, info) ->
       element_html
       |> view_element_info info
       |> view_element_type_table type_table
-      |> view_element_header module_name "type " name (parse_type_extra type_extra)
+      |> view_element_header module_name "type " name (parse_type_extra type_extra) false
   | Function (name, func_annotation, info) ->
       element_html
       |> view_element_info info
-      |> view_element_header module_name "val " name (" : " ^ func_annotation)
+      |> view_element_header module_name "val " name (": " ^ func_annotation) false
   | Exception (name, exec_parameter, info) ->
       element_html
       |> view_element_info info
-      |> view_element_header module_name "exception " name (parse_exception exec_parameter)
+      |> view_element_header module_name "exception " name (parse_exception exec_parameter) false
   | Module (name, info) ->
       element_html
       |> view_element_info info
-      |> view_element_header module_name "module " name (": sig .. end")
+      |> view_element_header module_name "module " name (": sig .. end") false
   | Moduletype (name, info) ->
       element_html
       |> view_element_info info
-      |> view_element_header module_name "module type " name (": sig .. end")
+      |> view_element_header module_name "module type " name (": sig .. end") false
   | Include name ->
-      view_element_header module_name "include " name "" element_html
+      view_element_header module_name "include " name "" false element_html
 
 let view_elements module_name elements =
   List.map (fun e ->
