@@ -231,6 +231,7 @@ let rec parse_section_info (node, section) =
   | Some node ->
     begin match name node with
     | "p" | "ul" ->
+        let _ = replace_links node in
         parse_section_info
           (node |> next_element,
           { section with
