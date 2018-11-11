@@ -151,14 +151,16 @@ let sidebar_header sidebar =
   ; h6
       [ id "back-link" ]
       [ a [ href "https://www.streamingspring.com" ]
-          [ text "<- Back to Blog" ]
+          [ i [ class' "fas fa-angle-double-left fa-lg" ] []
+          ; text " Back to Blog" ]
       ]
   ; input'
       [ type' "text"
       ; id "search-bar"
       ; value sidebar.search_term
       ; onInput updateSearchTerm
-      ; onEnter Search ]
+      ; onEnter Search
+      ; placeholder "Search" ]
       []
   ]
 

@@ -361,8 +361,14 @@ function sidebar_header(sidebar) {
                               Tea_html.href("https://www.streamingspring.com"),
                               /* [] */0
                             ], /* :: */[
-                              Tea_html.text("<- Back to Blog"),
-                              /* [] */0
+                              Tea_html.i(undefined, undefined, /* :: */[
+                                    Tea_html.class$prime("fas fa-angle-double-left fa-lg"),
+                                    /* [] */0
+                                  ], /* [] */0),
+                              /* :: */[
+                                Tea_html.text(" Back to Blog"),
+                                /* [] */0
+                              ]
                             ]),
                         /* [] */0
                       ]),
@@ -377,7 +383,10 @@ function sidebar_header(sidebar) {
                                 Tea_html.onInput(undefined, Types.updateSearchTerm),
                                 /* :: */[
                                   onEnter(/* Search */1),
-                                  /* [] */0
+                                  /* :: */[
+                                    Tea_html.placeholder("Search"),
+                                    /* [] */0
+                                  ]
                                 ]
                               ]
                             ]

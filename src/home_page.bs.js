@@ -84,8 +84,14 @@ function home_page() {
                                   ]),
                               /* :: */[
                                 Tea_html.p(undefined, undefined, /* [] */0, /* :: */[
-                                      Tea_html.text("<-------- Go checkout the docs!"),
-                                      /* [] */0
+                                      Tea_html.i(undefined, undefined, /* :: */[
+                                            Tea_html.class$prime("fas fa-hand-point-left fa-lg"),
+                                            /* [] */0
+                                          ], /* [] */0),
+                                      /* :: */[
+                                        Tea_html.text(" Go checkout the docs!"),
+                                        /* [] */0
+                                      ]
                                     ]),
                                 /* [] */0
                               ]

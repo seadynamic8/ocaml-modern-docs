@@ -52,7 +52,9 @@ let home_page _model =
                   [ text "Since I'm still learning OCaml, bear with me on the code, it
                     definitely needs some refactoring and could be done better." ]
               ]
-          ; p [] [ text "<-------- Go checkout the docs!" ]
+          ; p [] 
+            [ i [ class' "fas fa-hand-point-left fa-lg" ] []
+            ; text " Go checkout the docs!" ]
           ]
       ; footer 
           [ class' "footer" ]
