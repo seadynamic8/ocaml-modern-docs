@@ -166,8 +166,7 @@ let parse_element node =
           else
             None
         in
-        (* TODO  - Should be called like a 'generic' type *)
-        Typevariant (name, type_extra, type_table, div_info)
+        Type (name, type_extra, type_table, div_info)
     | "val" :: name :: _sep :: _tl ->
         let (_, annotation) = node |> R.select_one ".type" |> parse_html_info in
         Function (name, annotation, div_info)

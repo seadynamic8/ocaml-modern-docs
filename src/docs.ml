@@ -137,7 +137,7 @@ let elements_search_results element_results search_term section_elements =
       | Typepoly (name, _, _) when search_term_matches_name search_term name ->
           update_element_results "Type" name element_results
 
-      | Typevariant (name, _, _, _) when search_term_matches_name search_term name ->
+      | Type (name, _, _, _) when search_term_matches_name search_term name ->
           update_element_results "Type" name element_results
 
       | Function (name, _, _) when search_term_matches_name search_term name ->

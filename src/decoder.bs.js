@@ -81,20 +81,20 @@ function element_type_map(parameters, type_name) {
                   match$3[0],
                   match$3[1]
                 ]);
-    case "Typepoly" : 
-        var match$4 = Json_decode.tuple3(Json_decode.string, Json_decode.string, info, parameters);
-        return /* Typepoly */Block.__(0, [
+    case "Type" : 
+        var match$4 = Json_decode.tuple4(Json_decode.string, type_extra, type_table, info, parameters);
+        return /* Type */Block.__(1, [
                   match$4[0],
                   match$4[1],
-                  match$4[2]
+                  match$4[2],
+                  match$4[3]
                 ]);
-    case "Typevariant" : 
-        var match$5 = Json_decode.tuple4(Json_decode.string, type_extra, type_table, info, parameters);
-        return /* Typevariant */Block.__(1, [
+    case "Typepoly" : 
+        var match$5 = Json_decode.tuple3(Json_decode.string, Json_decode.string, info, parameters);
+        return /* Typepoly */Block.__(0, [
                   match$5[0],
                   match$5[1],
-                  match$5[2],
-                  match$5[3]
+                  match$5[2]
                 ]);
     default:
       return Pervasives.failwith("Unknown element type");

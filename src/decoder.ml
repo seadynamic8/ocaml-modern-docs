@@ -9,7 +9,7 @@ type exec_parameter  = string option
 
 type element_type
   = Typepoly of    name * type_type * info
-  | Typevariant of name * type_extra * type_table * info
+  | Type of        name * type_extra * type_table * info
   | Function of    name * func_annotation * info
   | Exception of   name * exec_parameter * info
   | Module of      name * info
@@ -73,9 +73,9 @@ module Decode = struct
       | "Typepoly" ->
           let (x, y, z) = parameters |> tuple3 name type_type info in
           Typepoly (x, y, z)
-      | "Typevariant" ->
+      | "Type" ->
           let (a, b, c, d) = parameters |> tuple4 name type_extra type_table info in
-          Typevariant (a, b, c, d)
+          Type (a, b, c, d)
       | "Function" ->
           let (x, y, z) = parameters |> tuple3 name func_annotation info in
           Function (x, y, z)

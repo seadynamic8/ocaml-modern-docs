@@ -64,7 +64,7 @@ let view_element module_name element_html element =
       element_html
       |> view_element_info info
       |> view_element_header module_name "type " name type_type true
-  | Typevariant (name, type_extra, type_table, info) ->
+  | Type (name, type_extra, type_table, info) ->
       element_html
       |> view_element_info info
       |> view_element_type_table type_table
